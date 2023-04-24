@@ -36,3 +36,18 @@ function operate(operator, num1, num2) {
       return null;
   }
 }
+const display = document.querySelector("#display");
+let displayValue = "";
+const numberBtn = document.querySelectorAll(".number");
+
+numberBtn.forEach((button) => {
+  button.addEventListener("click", () => {
+    populateDisplay(button.value);
+  });
+});
+
+function populateDisplay(num) {
+  displayValue += num.toString();
+  display.textContent = displayValue;
+}
+
