@@ -18,33 +18,26 @@ function divide(...numbers) {
   return res;
 }
 
-let firstNumber = null;
-let operator = null;
-let secondNumber = null;
-
-function operate(operator, num1, num2) {
+function operate(operator, ...operands) {
   switch (operator) {
     case "+":
-      return add(num1, num2);
+      return add(...operands);
     case "-":
-      return subtract(num1, num2);
+      return subtract(...operands);
     case "*":
-      return multiply(num1, num2);
+      return multiply(...operands);
     case "/":
-      return divide(num1, num2);
+      return divide(...operands);
     default:
       return null;
   }
 }
 const display = document.querySelector("#display");
 let displayValue = "";
-const numberBtn = document.querySelectorAll(".number");
-
-numberBtn.forEach((button) => {
-  button.addEventListener("click", () => {
-    populateDisplay(button.value);
-  });
-});
+let operands = [];
+display.textContent = "0";
+let operator = null;
+let result = null;
 
 function populateDisplay(num) {
   displayValue += num;
@@ -55,33 +48,53 @@ function resetDisplay() {
   displayValue = "";
 }
 
-const operatorBtn = document.querySelectorAll(".operator");
+function clearAll() {
+  operands = [];
+  operator = null;
+  resetDisplay();
+  display.textContent = "0";
+  console.log("DisplayValue " + displayValue);
+}
 
+function calculate() {
+  if (operands.length < 2 || !operator) {
+    return;
+  }
+  const result = operate(operator, ...operands);
+  operands = [result];
+  display.textContent = result;
+}
+
+const numberBtn = document.querySelectorAll(".number");
+numberBtn.forEach((button) => {
+  button.addEventListener("click", () => {
+    populateDisplay(button.value);
+    displayValue = parseInt(display.textContent);
+  });
+});
+
+const operatorBtn = document.querySelectorAll(".operator");
 operatorBtn.forEach((button) => {
   button.addEventListener("click", () => {
-    firstNumber = parseInt(displayValue);
+    if (button.value == operator) {
+      return;
+    } else {
+      operands.push(displayValue);
+      resetDisplay();
+    }
+
+    if (operands.length >= 2) {
+      calculate();
+    }
     operator = button.value;
-    resetDisplay();
   });
 });
 
 const equalBtn = document.querySelector(".equals");
-
 equalBtn.addEventListener("click", () => {
-  secondNumber = parseInt(displayValue);
-  let res = operate(operator, firstNumber, secondNumber);
-  resetDisplay();
-  populateDisplay(res);
-  operator = "";
+  operands.push(Number(displayValue));
+  calculate();
 });
-
-function clearAll() {
-  firstNumber = null;
-  operator = null;
-  secondNumber = null;
-  resetDisplay();
-  display.textContent = displayValue;
-}
 
 const clearBtn = document.querySelector(".clear");
 clearBtn.addEventListener("click", clearAll);
