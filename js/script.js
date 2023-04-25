@@ -47,7 +47,41 @@ numberBtn.forEach((button) => {
 });
 
 function populateDisplay(num) {
-  displayValue += num.toString();
+  displayValue += num;
   display.textContent = displayValue;
 }
 
+function resetDisplay() {
+  displayValue = "";
+}
+
+const operatorBtn = document.querySelectorAll(".operator");
+
+operatorBtn.forEach((button) => {
+  button.addEventListener("click", () => {
+    firstNumber = parseInt(displayValue);
+    operator = button.value;
+    resetDisplay();
+  });
+});
+
+const equalBtn = document.querySelector(".equals");
+
+equalBtn.addEventListener("click", () => {
+  secondNumber = parseInt(displayValue);
+  let res = operate(operator, firstNumber, secondNumber);
+  resetDisplay();
+  populateDisplay(res);
+  operator = "";
+});
+
+function clearAll() {
+  firstNumber = null;
+  operator = null;
+  secondNumber = null;
+  resetDisplay();
+  display.textContent = displayValue;
+}
+
+const clearBtn = document.querySelector(".clear");
+clearBtn.addEventListener("click", clearAll);
