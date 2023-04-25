@@ -70,18 +70,16 @@ numberBtn.forEach((button) => {
   button.addEventListener("click", () => {
     populateDisplay(button.value);
     displayValue = parseInt(display.textContent);
+    console.log("DisplayValue " + displayValue);
   });
 });
 
 const operatorBtn = document.querySelectorAll(".operator");
 operatorBtn.forEach((button) => {
   button.addEventListener("click", () => {
-    if (button.value == operator) {
-      return;
-    } else {
-      operands.push(displayValue);
-      resetDisplay();
-    }
+    operands.push(displayValue);
+    resetDisplay();
+    console.log(`Operands: ` + operands);
 
     if (operands.length >= 2) {
       calculate();
