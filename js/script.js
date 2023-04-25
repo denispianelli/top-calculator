@@ -14,6 +14,9 @@ function multiply(...numbers) {
 }
 
 function divide(...numbers) {
+  if (numbers.includes(0)) {
+    return "nice try";
+  }
   const res = numbers.reduce((num1, num2) => num1 / num2);
   return res;
 }
@@ -53,7 +56,6 @@ function clearAll() {
   operator = null;
   resetDisplay();
   display.textContent = "0";
-  console.log("DisplayValue " + displayValue);
 }
 
 function calculate() {
@@ -70,16 +72,18 @@ numberBtn.forEach((button) => {
   button.addEventListener("click", () => {
     populateDisplay(button.value);
     displayValue = parseInt(display.textContent);
-    console.log("DisplayValue " + displayValue);
   });
 });
 
 const operatorBtn = document.querySelectorAll(".operator");
 operatorBtn.forEach((button) => {
   button.addEventListener("click", () => {
-    operands.push(displayValue);
-    resetDisplay();
-    console.log(`Operands: ` + operands);
+    if (button.value == operator) {
+      return;
+    } else {
+      operands.push(displayValue);
+      resetDisplay();
+    }
 
     if (operands.length >= 2) {
       calculate();
