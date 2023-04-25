@@ -72,15 +72,18 @@ numberBtn.forEach((button) => {
   button.addEventListener("click", () => {
     populateDisplay(button.value);
     displayValue = parseInt(display.textContent);
+    prevInputWasNumber = true;
   });
 });
 
 const operatorBtn = document.querySelectorAll(".operator");
+let prevInputWasNumber = false;
 operatorBtn.forEach((button) => {
   button.addEventListener("click", () => {
-    if (button.value == operator) {
+    if (prevInputWasNumber == false && button.value == operator) {
       return;
     } else {
+      prevInputWasNumber = false;
       operands.push(displayValue);
       resetDisplay();
     }
@@ -89,6 +92,7 @@ operatorBtn.forEach((button) => {
       calculate();
     }
     operator = button.value;
+    console.log(operands);
   });
 });
 
