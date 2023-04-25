@@ -64,12 +64,29 @@ function calculate() {
   }
   const result = operate(operator, ...operands);
   operands = [result];
-  display.textContent = result;
+
+  if (result.toString().includes(".")) {
+    const decimalPlaces = result.toString().split(".")[1].length;
+    if (decimalPlaces > 15) {
+      display.textContent = result.toFixed(15);
+    } else {
+      display.textContent = result;
+    }
+  } else {
+    display.textContent = result;
+  }
 }
 
 const numberBtn = document.querySelectorAll(".number");
+let prevInputWasEqual = false;
 numberBtn.forEach((button) => {
   button.addEventListener("click", () => {
+    if (prevInputWasEqual) {
+      resetDisplay();
+      operands = [];
+      prevInputWasEqual = false;
+    }
+
     populateDisplay(button.value);
     displayValue = parseInt(display.textContent);
     prevInputWasNumber = true;
@@ -92,14 +109,19 @@ operatorBtn.forEach((button) => {
       calculate();
     }
     operator = button.value;
-    console.log(operands);
   });
 });
 
 const equalBtn = document.querySelector(".equals");
 equalBtn.addEventListener("click", () => {
-  operands.push(Number(displayValue));
-  calculate();
+  prevInputWasEqual = true;
+  if (operands.length > 0) {
+    operands.push(Number(displayValue));
+    calculate();
+  } else {
+    return;
+  }
+  console.log(operands);
 });
 
 const clearBtn = document.querySelector(".clear");
