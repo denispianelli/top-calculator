@@ -15,7 +15,7 @@ function multiply(...numbers) {
 
 function divide(...numbers) {
   if (numbers.includes(0)) {
-    return "nice try";
+    return "Cannot divide by zero";
   }
   const res = numbers.reduce((num1, num2) => num1 / num2);
   return res;
@@ -35,6 +35,7 @@ function operate(operator, ...operands) {
       return null;
   }
 }
+
 const display = document.querySelector("#display");
 let displayValue = "";
 let operands = [];
@@ -43,6 +44,13 @@ let operator = null;
 let result = null;
 
 function populateDisplay(num) {
+  if (isNaN(num)) {
+    display.textContent = "Invalid input";
+    resetDisplay();
+    return;
+  } else if (num === "." && displayValue.includes(".")) {
+    return;
+  }
   displayValue += num;
   display.textContent = displayValue;
 }
@@ -65,7 +73,6 @@ function calculate() {
   }
   result = operate(operator, ...operands);
   operands = [result];
-
   if (result.toString().includes(".")) {
     const decimalPlaces = result.toString().split(".")[1].length;
     if (decimalPlaces > 15) {
@@ -113,7 +120,6 @@ operatorBtn.forEach((button) => {
       prevInputWasEqual = false;
       prevInputWasOperator = true;
       operands.push(displayValue);
-      //resetDisplay();
     } else if (prevInputWasEqual == false && button.value == operator) {
       return;
     } else if (prevInputWasEqual == true && operands == result) {
