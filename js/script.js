@@ -70,6 +70,7 @@ function clearAll() {
   display.textContent = "0";
   decimalAdded = false;
   prevInput = null;
+  resetFontSize();
 }
 
 function calculate() {
@@ -80,6 +81,17 @@ function calculate() {
   operands = [result];
   const roundedResult = roundResult(result);
   display.textContent = roundedResult;
+
+  const fontSize = parseInt(window.getComputedStyle(display).fontSize);
+  const resultString = result.toString();
+  const maxWidth = 242;
+  let maxFontSize;
+  if (resultString.length >= 15) {
+    maxFontSize = Math.floor(maxWidth / (15 * 0.7));
+  } else {
+    maxFontSize = Math.floor(maxWidth / (resultString.length * 0.7));
+  }
+  display.style.fontSize = Math.min(fontSize, maxFontSize) + "px";
 }
 
 function roundResult(result) {
@@ -113,15 +125,20 @@ const numberBtn = document.querySelectorAll(".number");
 numberBtn.forEach((button) => {
   button.addEventListener("click", () => {
     if (prevInput === "equal") {
+      resetFontSize();
       resetDisplay();
       operands = [];
     } else if (prevInput === "operator") {
       resetDisplay();
+      resetFontSize();
     }
 
     populateDisplay(button.value);
     displayValue = Number(display.textContent);
     prevInput = "number";
+    if (display.textContent > 7) {
+      adjustFontSize();
+    }
   });
 });
 
@@ -177,3 +194,16 @@ equalBtn.addEventListener("click", () => {
 
 const clearBtn = document.querySelector(".clear");
 clearBtn.addEventListener("click", clearAll);
+
+function adjustFontSize() {
+  const fontSize = parseInt(window.getComputedStyle(display).fontSize);
+  const numChars = display.textContent.length;
+
+  if (numChars > 7 && fontSize > 15) {
+    display.style.fontSize = fontSize - 4 + "px";
+  }
+}
+
+function resetFontSize() {
+  display.style.fontSize = 50 + "px";
+}
