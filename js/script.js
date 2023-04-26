@@ -42,15 +42,18 @@ let operands = [];
 display.textContent = "0";
 let operator = null;
 let result = null;
+let decimalAdded = false;
+let prevInput = null;
 
 function populateDisplay(num) {
-  if (isNaN(num)) {
+  if (isNaN(num) && num !== ".") {
     display.textContent = "Invalid input";
     resetDisplay();
     return;
-  } else if (num === "." && displayValue.includes(".")) {
+  } else if (num === "." && decimalAdded) {
     return;
   }
+
   displayValue += num;
   display.textContent = displayValue;
 }
@@ -65,6 +68,8 @@ function clearAll() {
   result = null;
   resetDisplay();
   display.textContent = "0";
+  decimalAdded = false;
+  prevInput = null;
 }
 
 function calculate() {
@@ -73,65 +78,72 @@ function calculate() {
   }
   result = operate(operator, ...operands);
   operands = [result];
-  if (result.toString().includes(".")) {
-    const decimalPlaces = result.toString().split(".")[1].length;
-    if (decimalPlaces > 15) {
-      display.textContent = result.toFixed(15);
-    } else {
-      display.textContent = result;
-    }
+  const roundedResult = roundResult(result);
+  display.textContent = roundedResult;
+}
+
+function roundResult(result) {
+  const roundedResult = result.toFixed(15);
+  if (/\.?0+$/.test(roundedResult)) {
+    return Number(roundedResult).toString();
   } else {
-    display.textContent = result;
+    return roundedResult;
   }
 }
 
+const decimalBtn = document.querySelector(".decimal");
+decimalBtn.addEventListener("click", () => {
+  if (prevInput === null || prevInput === "operator") {
+    resetDisplay();
+    populateDisplay("0.");
+  } else if (prevInput === "equal") {
+    resetDisplay();
+    operands = [];
+    populateDisplay("0.");
+  } else {
+    populateDisplay(decimalBtn.textContent);
+  }
+
+  displayValue = display.textContent;
+  prevInput = "decimal";
+  decimalAdded = true;
+});
+
 const numberBtn = document.querySelectorAll(".number");
-let prevInputWasEqual = false;
-let prevInputWasOperator = false;
 numberBtn.forEach((button) => {
   button.addEventListener("click", () => {
-    if (prevInputWasEqual) {
+    if (prevInput === "equal") {
       resetDisplay();
       operands = [];
-      prevInputWasEqual = false;
-    } else if (prevInputWasOperator) {
+    } else if (prevInput === "operator") {
       resetDisplay();
-      prevInputWasOperator = false;
     }
 
     populateDisplay(button.value);
-    displayValue = parseInt(display.textContent);
-    prevInputWasNumber = true;
+    displayValue = Number(display.textContent);
+    prevInput = "number";
   });
 });
 
 const operatorBtn = document.querySelectorAll(".operator");
-let prevInputWasNumber = false;
 operatorBtn.forEach((button) => {
   button.addEventListener("click", () => {
-    if (
-      prevInputWasNumber == false &&
-      prevInputWasEqual == false &&
-      button.value == operator
-    ) {
+    if (prevInput === "operator" && button.value === operator) {
       return;
-    } else if (prevInputWasNumber == true) {
-      prevInputWasNumber = false;
-      prevInputWasEqual = false;
-      prevInputWasOperator = true;
+    } else if (prevInput === "number") {
+      prevInput = "operator";
       operands.push(displayValue);
-    } else if (prevInputWasEqual == false && button.value == operator) {
-      return;
-    } else if (prevInputWasEqual == true && operands == result) {
+    } else if (prevInput === "equal" && operands == result) {
       operator = button.value;
-      prevInputWasEqual = false;
-      prevInputWasOperator = true;
+      prevInput = "operator";
       resetDisplay();
-    } else if (prevInputWasEqual == true && operands != result) {
+    } else if (prevInput === "equal" && operands !== result) {
       operands.push(displayValue);
-      prevInputWasEqual = false;
-      prevInputWasOperator = true;
+      prevInput = "operator";
       resetDisplay();
+    } else if (prevInput === "decimal") {
+      prevInput = "operator";
+      operands.push(Number(displayValue));
     }
 
     if (operands.length >= 2) {
@@ -139,19 +151,28 @@ operatorBtn.forEach((button) => {
     }
 
     operator = button.value;
+    decimalAdded = false;
+    prevInput = "operator";
   });
 });
 
 const equalBtn = document.querySelector(".equals");
 equalBtn.addEventListener("click", () => {
-  prevInputWasEqual = true;
-  prevInputWasNumber = false;
-  if (operands.length > 0) {
+  if (prevInput === "operator") {
+    displayValue = Number(display.textContent);
+    operands.push(displayValue);
+    calculate();
+  } else if (prevInput === "decimal") {
+    operands.push(Number(displayValue));
+    calculate();
+  } else if (operands.length > 0) {
     operands.push(displayValue);
     calculate();
   } else {
     return;
   }
+  prevInput = "equal";
+  decimalAdded = false;
 });
 
 const clearBtn = document.querySelector(".clear");
