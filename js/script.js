@@ -54,6 +54,7 @@ function resetDisplay() {
 function clearAll() {
   operands = [];
   operator = null;
+  result = null;
   resetDisplay();
   display.textContent = "0";
 }
@@ -62,7 +63,7 @@ function calculate() {
   if (operands.length < 2 || !operator) {
     return;
   }
-  const result = operate(operator, ...operands);
+  result = operate(operator, ...operands);
   operands = [result];
 
   if (result.toString().includes(".")) {
@@ -79,12 +80,16 @@ function calculate() {
 
 const numberBtn = document.querySelectorAll(".number");
 let prevInputWasEqual = false;
+let prevInputWasOperator = false;
 numberBtn.forEach((button) => {
   button.addEventListener("click", () => {
     if (prevInputWasEqual) {
       resetDisplay();
       operands = [];
       prevInputWasEqual = false;
+    } else if (prevInputWasOperator) {
+      resetDisplay();
+      prevInputWasOperator = false;
     }
 
     populateDisplay(button.value);
@@ -97,17 +102,36 @@ const operatorBtn = document.querySelectorAll(".operator");
 let prevInputWasNumber = false;
 operatorBtn.forEach((button) => {
   button.addEventListener("click", () => {
-    if (prevInputWasNumber == false && button.value == operator) {
+    if (
+      prevInputWasNumber == false &&
+      prevInputWasEqual == false &&
+      button.value == operator
+    ) {
       return;
-    } else {
+    } else if (prevInputWasNumber == true) {
       prevInputWasNumber = false;
+      prevInputWasEqual = false;
+      prevInputWasOperator = true;
       operands.push(displayValue);
+      //resetDisplay();
+    } else if (prevInputWasEqual == false && button.value == operator) {
+      return;
+    } else if (prevInputWasEqual == true && operands == result) {
+      operator = button.value;
+      prevInputWasEqual = false;
+      prevInputWasOperator = true;
+      resetDisplay();
+    } else if (prevInputWasEqual == true && operands != result) {
+      operands.push(displayValue);
+      prevInputWasEqual = false;
+      prevInputWasOperator = true;
       resetDisplay();
     }
 
     if (operands.length >= 2) {
       calculate();
     }
+
     operator = button.value;
   });
 });
@@ -115,13 +139,13 @@ operatorBtn.forEach((button) => {
 const equalBtn = document.querySelector(".equals");
 equalBtn.addEventListener("click", () => {
   prevInputWasEqual = true;
+  prevInputWasNumber = false;
   if (operands.length > 0) {
-    operands.push(Number(displayValue));
+    operands.push(displayValue);
     calculate();
   } else {
     return;
   }
-  console.log(operands);
 });
 
 const clearBtn = document.querySelector(".clear");
