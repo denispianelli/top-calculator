@@ -83,18 +83,19 @@ function calculate() {
   display.textContent = roundedResult;
 
   const fontSize = parseInt(window.getComputedStyle(display).fontSize);
-  const resultString = result.toString();
+  const resultString = roundedResult.toString();
   const maxWidth = 242;
   let maxFontSize;
-  if (resultString.length >= 15) {
-    maxFontSize = Math.floor(maxWidth / (15 * 0.7));
-  } else {
-    maxFontSize = Math.floor(maxWidth / (resultString.length * 0.7));
-  }
+
+  maxFontSize = Math.floor(maxWidth / (resultString.length * 0.6));
+
   display.style.fontSize = Math.min(fontSize, maxFontSize) + "px";
 }
 
 function roundResult(result) {
+  if (result == "Cannot divide by zero") {
+    return result;
+  }
   const roundedResult = result.toFixed(15);
   if (/\.?0+$/.test(roundedResult)) {
     return Number(roundedResult).toString();
@@ -141,10 +142,26 @@ numberBtn.forEach((button) => {
     }
   });
 });
-
 const operatorBtn = document.querySelectorAll(".operator");
+
+operatorBtn.forEach((operator) => {
+  operator.addEventListener("click", (e) => {
+    operatorBtn.forEach((op) => {
+      if (op !== e.target) {
+        op.classList.remove("active");
+      }
+    });
+    e.target.classList.add("active");
+  });
+});
+
 operatorBtn.forEach((button) => {
   button.addEventListener("click", () => {
+    display.classList.add("blink");
+    setTimeout(() => {
+      display.classList.remove("blink");
+    }, 100);
+
     if (prevInput === "operator" && button.value === operator) {
       return;
     } else if (prevInput === "number") {
@@ -175,6 +192,13 @@ operatorBtn.forEach((button) => {
 
 const equalBtn = document.querySelector(".equals");
 equalBtn.addEventListener("click", () => {
+  display.classList.add("blink");
+  setTimeout(() => {
+    display.classList.remove("blink");
+  }, 100);
+  operatorBtn.forEach((operator) => {
+    operator.classList.remove("active");
+  });
   if (prevInput === "operator") {
     displayValue = Number(display.textContent);
     operands.push(displayValue);
@@ -188,13 +212,22 @@ equalBtn.addEventListener("click", () => {
   } else {
     return;
   }
+
   prevInput = "equal";
   decimalAdded = false;
 });
 
 const clearBtn = document.querySelector(".clear");
-clearBtn.addEventListener("click", clearAll);
-
+clearBtn.addEventListener("click", () => {
+  clearAll();
+  display.classList.add("blink");
+  setTimeout(() => {
+    display.classList.remove("blink");
+  }, 100);
+  operatorBtn.forEach((operator) => {
+    operator.classList.remove("active");
+  });
+});
 function adjustFontSize() {
   const fontSize = parseInt(window.getComputedStyle(display).fontSize);
   const numChars = display.textContent.length;
