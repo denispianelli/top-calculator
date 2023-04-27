@@ -1,48 +1,162 @@
 html {
-    box-sizing: border-box;
-  }
-  *, *::before, *::after {
-    box-sizing: inherit;
-  }
+  box-sizing: border-box;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+}
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+body {
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue",
+    Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-weight: 100;
+  background: linear-gradient(90deg, #16222a, #3a6073, #16222a);
+  margin: 0;
+  padding: 0;
+}
+
+.active {
+  background-color: white !important;
+  color: rgb(243, 156, 39) !important;
+}
+
+.header-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  height: 70px;
+  background-color: white;
+  color: rgb(40, 69, 115);
+}
+
+.logo {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+}
+
+.logo img {
+  width: 45px;
+}
+
+.title {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+  font-size: 40px;
+}
+
+.filler {
+  flex: 1;
+}
 
 #calculator {
-  width: 300px;
+  width: 242px;
+  min-width: 242px;
   border: 1px solid black;
-  padding: 10px;
   margin: 0 auto;
+  border-radius: 15px;
+  -webkit-box-shadow: 0px 30px 45px -15px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 30px 45px -15px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 30px 45px -15px rgba(0, 0, 0, 0.75);
+  -webkit-font-smoothing: antialiased;
+  background-color: rgb(125, 126, 132);
 }
 
 #display {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
   width: 100%;
-  height: 50px;
-  border: 1px solid gray;
-  margin-bottom: 10px;
-  padding: 5px;
+  height: 80px;
+  border-bottom: 1px solid rgb(0, 0, 0);
+  border-radius: 15px 15px 0 0;
   text-align: right;
-  font-size: 20px;
-  font-weight: bold;
-  background-color: white;
-  color: black;
+  font-size: 50px;
+  background-color: rgb(75, 76, 77);
+  color: white;
 }
 
-button {
-  width: 50px;
+.button-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+button,
+input[type="submit"],
+input[type="reset"] {
+  background: none;
+  color: inherit;
+  padding: 0;
+  border-width: 1px;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+  width: 60px;
   height: 50px;
-  margin: 5px;
-  font-size: 20px;
-  font-weight: bold;
-  border: 1px solid gray;
-  background-color: lightgray;
-  color: black;
-  border-radius: 5px;
+  font-size: 23px;
+  background-color: rgb(125, 126, 132);
+  color: white;
+  transition: background-color 0.5s ease;
 }
 
-button.operator {
-  background-color: orange;
+button.operator,
+button.equals {
+  background-color: rgb(243, 156, 39);
   color: white;
 }
 
-button.clear {
-  background-color: red;
-  color: white;
+button.number.zero {
+  flex: 2;
+  border-radius: 0px 0px 0px 15px;
+}
+
+button.equals {
+  border-radius: 0px 0px 15px 0px;
+}
+
+#top-btn {
+  background-color: rgb(99, 101, 107);
+}
+
+.blink {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0% {
+    color: transparent;
+  }
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70px;
+  width: 100%;
+  background-color: white;
+}
+
+.button-container:has(#numbers:hover) > #numbers:not(:hover) {
+  background-color: rgb(155, 156, 163);
+}
+
+.button-container:has(#operators:hover) > #operators:not(:hover) {
+  background-color: rgb(241, 182, 104);
+}
+
+.button-container:has(#top-btn:hover) > #top-btn:not(:hover) {
+  background-color: rgb(151, 153, 162);
 }
