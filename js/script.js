@@ -240,3 +240,29 @@ function adjustFontSize() {
 function resetFontSize() {
   display.style.fontSize = 50 + "px";
 }
+
+const header = document.querySelector(".header-container");
+const body = document.querySelector("body");
+const footer = document.querySelector(".footer");
+const darkMode = document.querySelector(".dark-mode-btn");
+const brightIcon = document.querySelector("#bright-icon");
+const brightLogo = document.querySelector("#bright-logo");
+
+let isDarkMode = false;
+
+darkMode.addEventListener("click", () => {
+  header.classList.toggle("dark-mode");
+  body.classList.toggle("dark-mode");
+  footer.classList.toggle("dark-mode-footer");
+  darkMode.classList.toggle("dark-mode");
+
+  if (isDarkMode) {
+    brightIcon.src = "./images/bright-mode.png";
+    brightLogo.src = "../images/denis-logo-black.png";
+    isDarkMode = false;
+  } else {
+    brightIcon.src = "../images/night-mode.png";
+    brightLogo.src = "../images/denis-logo-white.png";
+    isDarkMode = true;
+  }
+});

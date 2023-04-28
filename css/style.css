@@ -19,7 +19,7 @@ body {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue",
     Helvetica, Arial, "Lucida Grande", sans-serif;
   font-weight: 100;
-  background: linear-gradient(90deg, #16222a, #3a6073, #16222a);
+  background-color: rgb(249, 250, 251);
   margin: 0;
   padding: 0;
 }
@@ -33,32 +33,22 @@ body {
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin: 0;
-  height: 70px;
+  justify-content: space-between;
+  height: 65px;
   background-color: white;
   color: rgb(40, 69, 115);
+  border: 0 solid #e5e7eb;
+  border-bottom-width: 1px;
 }
 
-.logo {
-  display: flex;
-  justify-content: center;
-  flex: 1;
+.logo-big {
+  margin-left: 312px;
+  padding-left: 32px;
+  height: 50px;
 }
 
-.logo img {
-  width: 45px;
-}
-
-.title {
-  display: flex;
-  justify-content: center;
-  flex: 1;
-  font-size: 40px;
-}
-
-.filler {
-  flex: 1;
+.logo-big img {
+  height: 50px;
 }
 
 #calculator {
@@ -103,6 +93,9 @@ input[type="reset"] {
   font: inherit;
   cursor: pointer;
   outline: inherit;
+}
+
+#calculator button {
   width: 60px;
   height: 50px;
   font-size: 23px;
@@ -111,22 +104,22 @@ input[type="reset"] {
   transition: background-color 0.5s ease;
 }
 
-button.operator,
-button.equals {
+#calculator button.operator,
+#calculator button.equals {
   background-color: rgb(243, 156, 39);
   color: white;
 }
 
-button.number.zero {
+#calculator button.number.zero {
   flex: 2;
   border-radius: 0px 0px 0px 15px;
 }
 
-button.equals {
+#calculator button.equals {
   border-radius: 0px 0px 15px 0px;
 }
 
-#top-btn {
+#calculator #top-btn {
   background-color: rgb(99, 101, 107);
 }
 
@@ -147,6 +140,8 @@ button.equals {
   height: 70px;
   width: 100%;
   background-color: white;
+  border: 0 solid #e5e7eb;
+  border-top-width: 1px;
 }
 
 .button-container:has(#numbers:hover) > #numbers:not(:hover) {
@@ -160,3 +155,33 @@ button.equals {
 .button-container:has(#top-btn:hover) > #top-btn:not(:hover) {
   background-color: rgb(151, 153, 162);
 }
+
+.light-dark-mode {
+  display: flex;
+  align-items: center;
+  margin-right: 312px;
+  padding-right: 32px;
+  height: 50px;
+}
+
+.header-container button {
+  border: none;
+  height: 40px;
+  width: 40px;
+  border-radius: 40px;
+  background-color: #e5e7eb;
+  box-shadow: 0px 0px 3px 1px rgb(178, 178, 178);
+}
+
+.dark-mode {
+  background-color: rgb(17, 24, 39) !important;
+  border-color: rgb(31, 41, 55);
+  color: white;
+}
+
+.dark-mode-footer {
+  background-color: rgb(33, 40, 54);
+  border-color: rgb(31, 41, 55);
+  color: white;
+}
+
