@@ -258,11 +258,11 @@ darkMode.addEventListener("click", () => {
 
   if (isDarkMode) {
     brightIcon.src = "./images/bright-mode.png";
-    brightLogo.src = "../images/denis-logo-black.png";
+    brightLogo.src = "./images/denis-logo-black.png";
     isDarkMode = false;
   } else {
-    brightIcon.src = "../images/night-mode.png";
-    brightLogo.src = "../images/denis-logo-white.png";
+    brightIcon.src = "./images/night-mode.png";
+    brightLogo.src = "./images/denis-logo-white.png";
     isDarkMode = true;
   }
 });
