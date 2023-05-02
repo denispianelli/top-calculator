@@ -17,6 +17,7 @@ function divide(...numbers) {
   if (numbers.includes(0)) {
     return "Cannot divide by zero";
   }
+
   const res = numbers.reduce((num1, num2) => num1 / num2);
   return res;
 }
@@ -47,6 +48,7 @@ let prevInput = null;
 
 function populateDisplay(num) {
   if (isNaN(num) && num !== ".") {
+    display.style.fontSize = 24 + "px";
     display.textContent = "Invalid input";
     resetDisplay();
     return;
@@ -77,6 +79,7 @@ function calculate() {
   if (operands.length < 2 || !operator) {
     return;
   }
+
   result = operate(operator, ...operands);
   operands = [result];
   const roundedResult = roundResult(result);
@@ -96,7 +99,7 @@ function roundResult(result) {
   if (result == "Cannot divide by zero") {
     return result;
   }
-  const roundedResult = result.toFixed(15);
+  let roundedResult = Number(result).toFixed(15);
   if (/\.?0+$/.test(roundedResult)) {
     return Number(roundedResult).toString();
   } else {
@@ -125,6 +128,10 @@ decimalBtn.addEventListener("click", () => {
 const numberBtn = document.querySelectorAll(".number");
 numberBtn.forEach((button) => {
   button.addEventListener("click", () => {
+    if (display.textContent == "Invalid input") {
+      resetFontSize();
+    }
+
     if (prevInput === "equal") {
       resetFontSize();
       resetDisplay();
@@ -142,6 +149,7 @@ numberBtn.forEach((button) => {
     }
   });
 });
+
 const operatorBtn = document.querySelectorAll(".operator");
 
 operatorBtn.forEach((operator) => {
@@ -155,12 +163,16 @@ operatorBtn.forEach((operator) => {
   });
 });
 
+function blinkDisplay() {
+  display.classList.add("blink");
+  setTimeout(() => {
+    display.classList.remove("blink");
+  }, 100);
+}
+
 operatorBtn.forEach((button) => {
   button.addEventListener("click", () => {
-    display.classList.add("blink");
-    setTimeout(() => {
-      display.classList.remove("blink");
-    }, 100);
+    blinkDisplay();
 
     if (prevInput === "operator" && button.value === operator) {
       return;
@@ -178,6 +190,8 @@ operatorBtn.forEach((button) => {
     } else if (prevInput === "decimal") {
       prevInput = "operator";
       operands.push(Number(displayValue));
+    } else if (prevInput == "plusMinus") {
+      //operands.push(displayValue);
     }
 
     if (operands.length >= 2) {
@@ -190,15 +204,36 @@ operatorBtn.forEach((button) => {
   });
 });
 
+const plusMinus = document.querySelector(".plus-minus");
+plusMinus.addEventListener("click", () => {
+  blinkDisplay();
+  if (prevInput === "number") {
+    displayValue *= -1;
+    display.textContent = displayValue;
+  } else if (prevInput === "operator") {
+    displayValue = Number(display.textContent) * -1;
+    display.textContent = displayValue;
+  } else if (prevInput == "plusMinus") {
+    displayValue *= -1;
+    display.textContent = displayValue;
+  } else if (prevInput == "equal" && operands != result) {
+    displayValue = Number(display.textContent) * -1;
+    display.textContent = displayValue;
+  } else if (prevInput == "equal" && operands == result) {
+    operands = [operands * -1];
+    display.textContent = operands;
+  }
+
+  prevInput = "plusMinus";
+});
+
 const equalBtn = document.querySelector(".equals");
 equalBtn.addEventListener("click", () => {
-  display.classList.add("blink");
-  setTimeout(() => {
-    display.classList.remove("blink");
-  }, 100);
+  blinkDisplay();
   operatorBtn.forEach((operator) => {
     operator.classList.remove("active");
   });
+
   if (prevInput === "operator") {
     displayValue = Number(display.textContent);
     operands.push(displayValue);
@@ -209,6 +244,7 @@ equalBtn.addEventListener("click", () => {
   } else if (operands.length > 0) {
     operands.push(displayValue);
     calculate();
+  } else if (prevInput == "plusMinus") {
   } else {
     return;
   }
@@ -220,14 +256,12 @@ equalBtn.addEventListener("click", () => {
 const clearBtn = document.querySelector(".clear");
 clearBtn.addEventListener("click", () => {
   clearAll();
-  display.classList.add("blink");
-  setTimeout(() => {
-    display.classList.remove("blink");
-  }, 100);
+  blinkDisplay();
   operatorBtn.forEach((operator) => {
     operator.classList.remove("active");
   });
 });
+
 function adjustFontSize() {
   const fontSize = parseInt(window.getComputedStyle(display).fontSize);
   const numChars = display.textContent.length;
