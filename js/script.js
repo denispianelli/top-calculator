@@ -191,7 +191,7 @@ operatorBtn.forEach((button) => {
       prevInput = "operator";
       operands.push(Number(displayValue));
     } else if (prevInput == "plusMinus") {
-      //operands.push(displayValue);
+      operands.push(Number(displayValue));
     }
 
     if (operands.length >= 2) {
@@ -222,6 +222,7 @@ plusMinus.addEventListener("click", () => {
   } else if (prevInput == "equal" && operands == result) {
     operands = [operands * -1];
     display.textContent = operands;
+    resetDisplay();
   }
 
   prevInput = "plusMinus";
