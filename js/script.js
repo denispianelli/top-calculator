@@ -193,12 +193,20 @@ operatorBtn.forEach((button) => {
     } else if (prevInput === "decimal") {
       prevInput = "operator";
       operands.push(Number(displayValue));
-    } else if (prevInput == "plusMinus") {
+    } else if (prevInput == "plusMinus" && lastInputType == "number") {
       prevInput = "operator";
       operands.push(Number(displayValue));
-    } else if (prevInput == "percentageDivisor") {
+    } else if (prevInput == "plusMinus" && lastInputType == "operators") {
+      operator = button.value;
+      prevInput = "operator";
+      resetDisplay();
+    } else if (prevInput == "percentageDivisor" && lastInputType == "number") {
       prevInput = "operator";
       operands.push(Number(displayValue));
+    } else if (prevInput == "percentageDivisor" && lastInputType == "operators") {
+      operator = button.value;
+      prevInput = "operator";
+      resetDisplay();
     }
 
     if (operands.length >= 2) {
