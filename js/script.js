@@ -139,7 +139,7 @@ numberBtn.forEach((button) => {
     } else if (prevInput == "plusMinus") {
       resetDisplay();
       resetFontSize();
-    } else if (prevInput == "plusMinus") {
+    } else if (prevInput == "percentageDivisor") {
       resetDisplay();
       resetFontSize();
     }
@@ -180,32 +180,27 @@ operatorBtn.forEach((button) => {
     if (prevInput === "operator" && button.value === operator) {
       return;
     } else if (prevInput === "number") {
-      prevInput = "operator";
       operands.push(Number(displayValue));
     } else if (prevInput === "equal" && operands == result) {
       operator = button.value;
-      prevInput = "operator";
       resetDisplay();
     } else if (prevInput === "equal" && operands !== result) {
       operands.push(Number(displayValue));
-      prevInput = "operator";
       resetDisplay();
     } else if (prevInput === "decimal") {
-      prevInput = "operator";
       operands.push(Number(displayValue));
     } else if (prevInput == "plusMinus" && lastInputType == "number") {
-      prevInput = "operator";
       operands.push(Number(displayValue));
     } else if (prevInput == "plusMinus" && lastInputType == "operators") {
       operator = button.value;
-      prevInput = "operator";
       resetDisplay();
     } else if (prevInput == "percentageDivisor" && lastInputType == "number") {
-      prevInput = "operator";
       operands.push(Number(displayValue));
-    } else if (prevInput == "percentageDivisor" && lastInputType == "operators") {
+    } else if (
+      prevInput == "percentageDivisor" &&
+      lastInputType == "operators"
+    ) {
       operator = button.value;
-      prevInput = "operator";
       resetDisplay();
     }
 
@@ -341,13 +336,21 @@ function percentageDivisor() {
     lastInputType = "operators";
   }
 
-  if (prevInput == "plusMinus" && lastInputType == "number") {
+  if (prevInput == "percentageDivisor" && lastInputType == "number") {
     displayValue /= 100;
     display.textContent = displayValue;
-  } else if (prevInput == "plusMinus" && lastInputType == "operators") {
+  } else if (prevInput == "percentageDivisor" && lastInputType == "operators") {
     operands = [(operands /= 100)];
     display.textContent = operands;
   }
 
+  const fontSize = parseInt(window.getComputedStyle(display).fontSize);
+  const resultString = display.textContent;
+  const maxWidth = 242;
+  let maxFontSize;
+
+  maxFontSize = Math.floor(maxWidth / (resultString.length * 0.6));
+
+  display.style.fontSize = Math.min(fontSize, maxFontSize) + "px";
   prevInput = "percentageDivisor";
 }
