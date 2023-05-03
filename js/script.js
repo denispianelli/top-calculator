@@ -144,8 +144,12 @@ numberBtn.forEach((button) => {
       resetFontSize();
     }
 
+    if (decimalAdded == true && !displayValue.toString().includes(".")) {
+      displayValue = display.textContent;
+    }
+
     populateDisplay(button.value);
-    displayValue = display.textContent;
+    displayValue = Number(display.textContent);
     prevInput = "number";
 
     if (display.textContent > 7) {
@@ -203,7 +207,10 @@ operatorBtn.forEach((button) => {
     } else if (prevInput == "percentageDivisor" && lastInputType == "number") {
       prevInput = "operator";
       operands.push(Number(displayValue));
-    } else if (prevInput == "percentageDivisor" && lastInputType == "operators") {
+    } else if (
+      prevInput == "percentageDivisor" &&
+      lastInputType == "operators"
+    ) {
       operator = button.value;
       prevInput = "operator";
       resetDisplay();
@@ -239,6 +246,7 @@ equalBtn.addEventListener("click", () => {
     return;
   }
 
+  lastInputType = "operators"
   prevInput = "equal";
   decimalAdded = false;
 });
@@ -351,3 +359,60 @@ function percentageDivisor() {
 
   prevInput = "percentageDivisor";
 }
+
+function handleBackSpace() {
+  if (lastInputType == "operators" && prevInput != "number") {
+    return;
+  } else {
+    displayValue = displayValue.toString().slice(0, -1);
+    display.textContent = displayValue;
+  }
+  if (displayValue.length == 0) {
+    display.textContent = "0";
+  }
+}
+
+//Keyboard support
+
+document.addEventListener("keydown", (event) => {
+  const key = event.key;
+
+  if (/^\d$/.test(key)) {
+    // handle digits
+    numberBtn.forEach((button) => {
+      if (button.textContent === key) {
+        button.click();
+        button.classList.add("highlight");
+        setTimeout(() => {
+          button.classList.remove("highlight");
+        }, 100);
+      }
+    });
+  } else if (key === "") {
+    return;
+  } else if (key === "Backspace") {
+    handleBackSpace();
+  } else if (key === "Enter") {
+    // handle equals
+    event.preventDefault();
+    equalBtn.click();
+  } else if (key === "." || key === ",") {
+    // handle decimal point
+    decimalBtn.click();
+  } else if (key === "Escape") {
+    clearBtn.click();
+  } else {
+    // handle operators
+    operatorBtn.forEach((button) => {
+      if (button.textContent === key) {
+        button.click();
+      } else if (key === "/" && button.value === "/") {
+        event.preventDefault();
+        button.click();
+      } else if (key === "*" && button.value === "*") {
+        event.preventDefault();
+        button.click();
+      }
+    });
+  }
+});
