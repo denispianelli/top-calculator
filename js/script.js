@@ -139,6 +139,9 @@ numberBtn.forEach((button) => {
     } else if (prevInput == "plusMinus") {
       resetDisplay();
       resetFontSize();
+    } else if (prevInput == "plusMinus") {
+      resetDisplay();
+      resetFontSize();
     }
 
     populateDisplay(button.value);
@@ -191,6 +194,9 @@ operatorBtn.forEach((button) => {
       prevInput = "operator";
       operands.push(Number(displayValue));
     } else if (prevInput == "plusMinus") {
+      prevInput = "operator";
+      operands.push(Number(displayValue));
+    } else if (prevInput == "percentageDivisor") {
       prevInput = "operator";
       operands.push(Number(displayValue));
     }
@@ -289,19 +295,51 @@ function negateNumber() {
     displayValue *= -1;
     display.textContent = displayValue;
     lastInputType = "number";
-  } else if (prevInput == "operator" || prevInput == "equal") {
+  } else if (
+    prevInput == "operator" ||
+    prevInput == "equal" ||
+    prevInput == "percentageDivisor"
+  ) {
     operands = [operands * -1];
     display.textContent = operands;
-    lastInputType = "operatorOrEqual"
+    lastInputType = "operators";
   }
 
   if (prevInput == "plusMinus" && lastInputType == "number") {
     displayValue *= -1;
     display.textContent = displayValue;
-  } else if (prevInput == "plusMinus" && lastInputType == "operatorOrEqual") {
+  } else if (prevInput == "plusMinus" && lastInputType == "operators") {
     operands = [operands * -1];
     display.textContent = operands;
   }
 
   prevInput = "plusMinus";
+}
+
+const percentageBtn = document.querySelector(".percentage");
+percentageBtn.addEventListener("click", () => {
+  blinkDisplay();
+  percentageDivisor();
+});
+
+function percentageDivisor() {
+  if (prevInput == "number" || prevInput == null) {
+    displayValue /= 100;
+    display.textContent = displayValue;
+    lastInputType = "number";
+  } else if (prevInput == "operator" || prevInput == "equal") {
+    operands = [(operands /= 100)];
+    display.textContent = operands;
+    lastInputType = "operators";
+  }
+
+  if (prevInput == "plusMinus" && lastInputType == "number") {
+    displayValue /= 100;
+    display.textContent = displayValue;
+  } else if (prevInput == "plusMinus" && lastInputType == "operators") {
+    operands = [(operands /= 100)];
+    display.textContent = operands;
+  }
+
+  prevInput = "percentageDivisor";
 }
