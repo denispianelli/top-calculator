@@ -42,7 +42,7 @@ body {
 }
 
 .logo-big img {
-    padding-left: 32px;
+  padding-left: 32px;
   height: 50px;
 }
 
@@ -56,7 +56,7 @@ body {
   -moz-box-shadow: 0px 30px 45px -15px rgba(0, 0, 0, 0.75);
   box-shadow: 0px 30px 45px -15px rgba(0, 0, 0, 0.75);
   -webkit-font-smoothing: antialiased;
-  background-color: rgb(125, 126, 132);
+  background-color: rgba(125, 126, 132, 0.90);
 }
 
 #display {
@@ -69,8 +69,9 @@ body {
   border-radius: 15px 15px 0 0;
   text-align: right;
   font-size: 50px;
-  background-color: rgb(75, 76, 77);
+  background-color: rgba(75, 76, 77, 0.90);
   color: white;
+  padding-right: 15px;
 }
 
 .button-container {
@@ -81,13 +82,19 @@ body {
 button,
 input[type="submit"],
 input[type="reset"] {
+  appearance: none;
   background: none;
   color: inherit;
   padding: 0;
-  border-width: 1px;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  border-top: rgb(0, 0, 0);
+  border-right: rgb(0, 0, 0);
   font: inherit;
   cursor: pointer;
-  outline: inherit;
+}
+
+button:focus {
+  outline: none;
 }
 
 #calculator button {
@@ -96,7 +103,7 @@ input[type="reset"] {
   font-size: 23px;
   background-color: rgb(125, 126, 132);
   color: white;
-  transition: background-color 0.5s ease;
+  transition: background-color 0.2s ease;
 }
 
 #calculator button.operator,
@@ -126,6 +133,11 @@ input[type="reset"] {
   0% {
     color: transparent;
   }
+}
+
+.highlight {
+  background-color: rgb(181, 182, 190) !important;
+  transition: background-color 0s !important;
 }
 
 .footer {
@@ -178,4 +190,3 @@ input[type="reset"] {
   border-color: rgb(31, 41, 55);
   color: white;
 }
-
