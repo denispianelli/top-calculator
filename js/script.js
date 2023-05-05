@@ -349,11 +349,13 @@ percentageBtn.addEventListener("click", () => {
   percentageDivisor();
 });
 
+let percentageCase;
+
 function percentageDivisor() {
-  if (operands.length == 0) {
+  if (operands.length == 0 && prevInput != "percentageDivisor") {
     displayValue /= 100;
     display.textContent = displayValue;
-    lastInputType = "number";
+    percentageCase = "displayValue";
   } else if (
     prevInput == "number" &&
     (lastOperator == "add" || lastOperator == "subtract") &&
@@ -362,33 +364,41 @@ function percentageDivisor() {
     let result = operands * (displayValue / 100);
     displayValue = result;
     display.textContent = result;
-    lastInputType = "result";
+    percentageCase = "result";
   } else if (prevInput == "equal") {
     operands = [operands / 100];
     display.textContent = operands;
-    lastInputType = "operators";
+    percentageCase = "operands";
   } else if (
     (lastOperator == "multiply" || lastOperator == "divide") &&
     operands.length != 0 &&
-    prevInput != "percentageDivisor"
+    prevInput != "percentageDivisor" && prevInput != "plusMinus"
   ) {
     displayValue /= 100;
     display.textContent = displayValue;
-    lastInputType = "number";
+    percentageCase = "displayValue";
   } else if (prevInput == "operator") {
     operands = [operands / 100];
     display.textContent = operands;
-    lastInputType == "operators";
-  }
-
-  if (prevInput == "percentageDivisor" && lastInputType == "number") {
+    percentageCase = "operands";
+  } else if (prevInput == "plusMinus" && lastInputType == "operators") {
+    operands = [operands / 100];
+    display.textContent = operands;
+    percentageCase = "operands";
+  } else if (prevInput == "plusMinus") {
     displayValue /= 100;
     display.textContent = displayValue;
-  } else if (prevInput == "percentageDivisor" && lastInputType == "operators") {
+    percentageCase = "displayValue";
+  }
+
+  if (prevInput == "percentageDivisor" && percentageCase == "displayValue") {
+    displayValue /= 100;
+    display.textContent = displayValue;
+  } else if (prevInput == "percentageDivisor" && percentageCase == "operands") {
     operands = [(operands /= 100)];
     display.textContent = operands;
   }
-  if (prevInput == "percentageDivisor" && lastInputType == "result") {
+  if (prevInput == "percentageDivisor" && percentageCase == "result") {
     result = operands * (displayValue / 100);
     displayValue = result;
     display.textContent = result;
