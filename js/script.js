@@ -44,6 +44,7 @@ let operator = null;
 let result = null;
 let decimalAdded = false;
 let prevInput = null;
+let lastOperator = null;
 
 function populateDisplay(num) {
   if (isNaN(num) && num !== ".") {
@@ -71,6 +72,9 @@ function clearAll() {
   decimalAdded = false;
   prevInput = null;
   resetFontSize();
+  lastInputType = null;
+  lastOperator = null;
+  document.querySelector('.clear-text').textContent = 'AC';
 }
 
 function calculate() {
@@ -82,14 +86,7 @@ function calculate() {
   const roundedResult = roundResult(result);
   display.textContent = roundedResult;
 
-  const fontSize = parseInt(window.getComputedStyle(display).fontSize);
-  const resultString = roundedResult.toString();
-  const maxWidth = 242;
-  let maxFontSize;
-
-  maxFontSize = Math.floor(maxWidth / (resultString.length * 0.6));
-
-  display.style.fontSize = Math.min(fontSize, maxFontSize) + "px";
+  adjustFontSize(roundedResult);
 }
 
 function roundResult(result) {
@@ -98,6 +95,8 @@ function roundResult(result) {
   }
   const roundedResult = Number(result).toFixed(15);
   if (/\.?0+$/.test(roundedResult)) {
+    return Number(roundedResult).toString();
+  } else if (/\.?9+$/.test(roundedResult)) {
     return Number(roundedResult).toString();
   } else {
     return roundedResult;
@@ -125,6 +124,8 @@ decimalBtn.addEventListener("click", () => {
 const numberBtn = document.querySelectorAll(".number");
 numberBtn.forEach((button) => {
   button.addEventListener("click", () => {
+    document.querySelector('.clear-text').textContent = 'C';
+
     if (display.textContent == "Invalid input") {
       resetFontSize();
     }
@@ -139,17 +140,21 @@ numberBtn.forEach((button) => {
     } else if (prevInput == "plusMinus") {
       resetDisplay();
       resetFontSize();
-    } else if (prevInput == "percentageDivisor") {
+    } else if (prevInput == "plusMinus") {
       resetDisplay();
       resetFontSize();
     }
 
+    if (decimalAdded == true && !displayValue.toString().includes(".")) {
+      displayValue = display.textContent;
+    }
+
     populateDisplay(button.value);
-    displayValue = display.textContent;
+    displayValue = Number(display.textContent);
     prevInput = "number";
 
     if (display.textContent > 7) {
-      adjustFontSize();
+      adjustFontSize(displayValue);
     }
   });
 });
@@ -180,28 +185,46 @@ operatorBtn.forEach((button) => {
     if (prevInput === "operator" && button.value === operator) {
       return;
     } else if (prevInput === "number") {
+      prevInput = "operator";
       operands.push(Number(displayValue));
     } else if (prevInput === "equal" && operands == result) {
       operator = button.value;
+      prevInput = "operator";
       resetDisplay();
     } else if (prevInput === "equal" && operands !== result) {
       operands.push(Number(displayValue));
+      prevInput = "operator";
       resetDisplay();
     } else if (prevInput === "decimal") {
+      prevInput = "operator";
       operands.push(Number(displayValue));
     } else if (prevInput == "plusMinus" && lastInputType == "number") {
+      prevInput = "operator";
       operands.push(Number(displayValue));
     } else if (prevInput == "plusMinus" && lastInputType == "operators") {
       operator = button.value;
+      prevInput = "operator";
       resetDisplay();
     } else if (prevInput == "percentageDivisor" && lastInputType == "number") {
+      prevInput = "operator";
       operands.push(Number(displayValue));
     } else if (
       prevInput == "percentageDivisor" &&
       lastInputType == "operators"
     ) {
       operator = button.value;
+      prevInput = "operator";
       resetDisplay();
+    }
+
+    if (button.value == "+") {
+      lastOperator = "add";
+    } else if (button.value == "-") {
+      lastOperator = "subtract";
+    } else if (button.value == "*") {
+      lastOperator = "multiply";
+    } else if (button.value == "/") {
+      lastOperator = "divide";
     }
 
     if (operands.length >= 2) {
@@ -246,13 +269,16 @@ clearBtn.addEventListener("click", () => {
     operator.classList.remove("active");
   });
 });
-function adjustFontSize() {
-  const fontSize = parseInt(window.getComputedStyle(display).fontSize);
-  const numChars = display.textContent.length;
 
-  if (numChars > 7 && fontSize > 15) {
-    display.style.fontSize = fontSize - 4 + "px";
-  }
+function adjustFontSize(value) {
+  const fontSize = parseInt(window.getComputedStyle(display).fontSize);
+  const resultString = value.toString();
+  const maxWidth = 242;
+  let maxFontSize;
+
+  maxFontSize = Math.floor(maxWidth / (resultString.length * 0.7));
+
+  display.style.fontSize = Math.min(fontSize, maxFontSize) + "px";
 }
 
 function resetFontSize() {
@@ -298,14 +324,26 @@ function negateNumber() {
     displayValue *= -1;
     display.textContent = displayValue;
     lastInputType = "number";
+  } else if (prevInput == "operator" || prevInput == "equal") {
+    operands = [operands * -1];
+    display.textContent = operands;
+    lastInputType = "operators";
+  } else if (prevInput == "percentageDivisor" && lastInputType == "result") {
+    displayValue *= -1;
+    display.textContent = displayValue;
+    lastInputType = "percentage";
   } else if (
-    prevInput == "operator" ||
-    prevInput == "equal" ||
-    prevInput == "percentageDivisor"
+    prevInput == "percentageDivisor" &&
+    lastInputType != "result" &&
+    lastInputType != "number"
   ) {
     operands = [operands * -1];
     display.textContent = operands;
     lastInputType = "operators";
+  } else if (prevInput == "percentageDivisor" && lastInputType == "number") {
+    displayValue *= -1;
+    display.textContent = displayValue;
+    lastInputType = "percentage";
   }
 
   if (prevInput == "plusMinus" && lastInputType == "number") {
@@ -314,6 +352,9 @@ function negateNumber() {
   } else if (prevInput == "plusMinus" && lastInputType == "operators") {
     operands = [operands * -1];
     display.textContent = operands;
+  } else if (prevInput == "plusMinus" && lastInputType == "percentage") {
+    displayValue *= -1;
+    display.textContent = displayValue;
   }
 
   prevInput = "plusMinus";
@@ -326,14 +367,35 @@ percentageBtn.addEventListener("click", () => {
 });
 
 function percentageDivisor() {
-  if (prevInput == "number" || prevInput == null) {
+  if (operands.length == 0) {
     displayValue /= 100;
     display.textContent = displayValue;
     lastInputType = "number";
-  } else if (prevInput == "operator" || prevInput == "equal") {
-    operands = [(operands /= 100)];
+  } else if (
+    prevInput == "number" &&
+    (lastOperator == "add" || lastOperator == "subtract") &&
+    operands.length != 0
+  ) {
+    let result = operands * (displayValue / 100);
+    displayValue = result;
+    display.textContent = result;
+    lastInputType = "result";
+  } else if (prevInput == "equal") {
+    operands = [operands / 100];
     display.textContent = operands;
     lastInputType = "operators";
+  } else if (
+    (lastOperator == "multiply" || lastOperator == "divide") &&
+    operands.length != 0 &&
+    prevInput != "percentageDivisor"
+  ) {
+    displayValue /= 100;
+    display.textContent = displayValue;
+    lastInputType = "number";
+  } else if (prevInput == "operator") {
+    operands = [operands / 100];
+    display.textContent = operands;
+    lastInputType == "operators";
   }
 
   if (prevInput == "percentageDivisor" && lastInputType == "number") {
@@ -343,14 +405,158 @@ function percentageDivisor() {
     operands = [(operands /= 100)];
     display.textContent = operands;
   }
+  if (prevInput == "percentageDivisor" && lastInputType == "result") {
+    result = operands * (displayValue / 100);
+    displayValue = result;
+    display.textContent = result;
+  }
 
-  const fontSize = parseInt(window.getComputedStyle(display).fontSize);
-  const resultString = display.textContent;
-  const maxWidth = 242;
-  let maxFontSize;
-
-  maxFontSize = Math.floor(maxWidth / (resultString.length * 0.6));
-
-  display.style.fontSize = Math.min(fontSize, maxFontSize) + "px";
+  adjustFontSize(displayValue);
   prevInput = "percentageDivisor";
+}
+
+//Keyboard support
+
+function highlight(button) {
+  button.classList.add("highlight");
+  setTimeout(() => {
+    button.classList.remove("highlight");
+  }, 100);
+}
+
+document.addEventListener("keydown", (event) => {
+  const key = event.key;
+
+  if (/^\d$/.test(key)) {
+    numberBtn.forEach((button) => {
+      if (button.textContent === key) {
+        button.click();
+        highlight(button);
+      }
+    });
+  } else if (key === "") {
+    return;
+  } else if (key === "Backspace") {
+    handleBackSpace();
+  } else if (key === "Enter") {
+    event.preventDefault();
+    equalBtn.click();
+  } else if (key === "." || key === ",") {
+    decimalBtn.click();
+  } else if (key === "Escape") {
+    clearBtn.click();
+    highlight(clearBtn);
+  } else if (key === "%") {
+    highlight(percentageBtn);
+    event.preventDefault();
+    percentageBtn.click();
+  } else if (event.ctrlKey && key === "-") {
+    highlight(plusMinus);
+    event.preventDefault();
+    plusMinus.click();
+  }
+   else {
+    operatorBtn.forEach((button) => {
+      if (button.textContent === key) {
+        button.click();
+      } else if (key === "/" && button.value === "/") {
+        event.preventDefault();
+        button.click();
+      } else if (key === "*" && button.value === "*") {
+        event.preventDefault();
+        button.click();
+      } else if (key === "+" && button.value === "+") {
+        event.preventDefault();
+        button.click();
+      } else if ((key === "-") & (button.value === "-")) {
+        event.preventDefault();
+        button.click();
+      } 
+    });
+  }
+});
+
+function handleBackSpace() {
+  if (lastInputType == "operators" && prevInput != "number") {
+    return;
+  } else {
+    displayValue = displayValue.toString().slice(0, -1);
+    display.textContent = displayValue;
+  }
+  if (displayValue.length == 0) {
+    display.textContent = "0";
+  }
+}
+
+//Keyboard support
+
+function highlight(button) {
+  button.classList.add("highlight");
+  setTimeout(() => {
+    button.classList.remove("highlight");
+  }, 100);
+}
+
+document.addEventListener("keydown", (event) => {
+  const key = event.key;
+
+  if (/^\d$/.test(key)) {
+    numberBtn.forEach((button) => {
+      if (button.textContent === key) {
+        button.click();
+        highlight(button);
+      }
+    });
+  } else if (key === "") {
+    return;
+  } else if (key === "Backspace") {
+    handleBackSpace();
+  } else if (key === "Enter") {
+    event.preventDefault();
+    equalBtn.click();
+  } else if (key === "." || key === ",") {
+    decimalBtn.click();
+  } else if (key === "Escape") {
+    clearBtn.click();
+    highlight(clearBtn);
+  } else if (key === "%") {
+    highlight(percentageBtn);
+    event.preventDefault();
+    percentageBtn.click();
+  } else if (event.ctrlKey && key === "-") {
+    highlight(plusMinus);
+    event.preventDefault();
+    plusMinus.click();
+  }
+   else {
+    operatorBtn.forEach((button) => {
+      if (button.textContent === key) {
+        button.click();
+      } else if (key === "/" && button.value === "/") {
+        event.preventDefault();
+        button.click();
+      } else if (key === "*" && button.value === "*") {
+        event.preventDefault();
+        button.click();
+      } else if (key === "+" && button.value === "+") {
+        event.preventDefault();
+        button.click();
+      } else if ((key === "-") & (button.value === "-")) {
+        event.preventDefault();
+        button.click();
+      } 
+    });
+  }
+});
+
+function handleBackSpace() {
+  if (lastInputType == "operators" && prevInput != "number") {
+    return;
+  } else {
+    displayValue = displayValue.toString().slice(0, -1);
+    display.textContent = displayValue;
+  }
+  if (displayValue.length == 0) {
+    display.textContent = "0";
+  }
 }
