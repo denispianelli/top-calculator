@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="./images/calculator.png">
+    <link rel="shortcut icon" href="./images/calculator.png" />
     <link rel="stylesheet" href="./css/style.css" />
     <title>Calculator</title>
   </head>
@@ -22,7 +22,7 @@
           <img
             src="./images/bright-mode.png"
             id="bright-icon"
-            alt="brigth mode icon"
+            alt="bright mode icon"
           />
         </button>
       </div>
@@ -30,25 +30,47 @@
     <div id="calculator">
       <div id="display"></div>
       <div class="button-container">
-        <button class="clear" id="top-btn">C</button>
-        <button class="plus-minus" id="top-btn">+/-</button>
-        <button class="percentage" id="top-btn">%</button>
-        <button class="operator" id="operators" value="/">÷</button>
+        <button class="clear tooltip" id="top-btn">
+          <span class="clear-text">AC</span>
+          <span class="tooltiptext">Effacer (ou appuyer sur Esc)</span>
+        </button>
+        <button class="plus-minus tooltip" id="top-btn">
+          <span class="plus">+</span>/<span class="minus">-</span
+          ><span class="tooltiptext"
+            >Inverser la valeur affichée (ou appuyer sur Ctrl + Moins)</span
+          >
+        </button>
+        <button class="percentage tooltip" id="top-btn" value="%">
+          %<span class="tooltiptext">Pourcentage (ou appuyer sur %)</span>
+        </button>
+        <button class="operator tooltip" id="operators" value="/">
+          ÷<span class="tooltiptext">Diviser (ou appuyer sur /)</span>
+        </button>
         <button class="number" id="numbers" value="7">7</button>
         <button class="number" id="numbers" value="8">8</button>
         <button class="number" id="numbers" value="9">9</button>
-        <button class="operator" id="operators" value="*">x</button>
+        <button class="operator tooltip" id="operators" value="*">
+          ×<span class="tooltiptext">Multiplier (ou appuyer sur *)</span>
+        </button>
         <button class="number" id="numbers" value="4">4</button>
         <button class="number" id="numbers" value="5">5</button>
         <button class="number" id="numbers" value="6">6</button>
-        <button class="operator" id="operators" value="-">-</button>
+        <button class="operator tooltip" id="operators" value="-">
+          −<span class="tooltiptext">Soustraire (ou appuyer sur -)</span>
+        </button>
         <button class="number" id="numbers" value="1">1</button>
         <button class="number" id="numbers" value="2">2</button>
         <button class="number" id="numbers" value="3">3</button>
-        <button class="operator" id="operators" value="+">+</button>
+        <button class="operator tooltip" id="operators" value="+">
+          +<span class="tooltiptext">Ajouter (ou appuyer sur +)</span>
+        </button>
         <button class="number zero" id="numbers" value="0">0</button>
         <button class="decimal" id="numbers" value=".">.</button>
-        <button class="equals" id="operators">=</button>
+        <button class="equals tooltip" id="operators">
+          =<span class="tooltiptext"
+            >Égal (ou appuyer sur la touche Retour)</span
+          >
+        </button>
       </div>
     </div>
     <div class="footer">Copyright © denispianelli 2023</div>
