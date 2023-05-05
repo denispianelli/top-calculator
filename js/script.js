@@ -1,3 +1,13 @@
+const display = document.querySelector("#display");
+display.textContent = "0";
+let displayValue = "";
+let operands = [];
+let operator = null;
+let result = null;
+let decimalAdded = false;
+let prevInput = null;
+let lastOperator = null;
+
 function add(...numbers) {
   const res = numbers.reduce((num1, num2) => num1 + num2);
   return res;
@@ -36,16 +46,6 @@ function operate(operator, ...operands) {
   }
 }
 
-const display = document.querySelector("#display");
-let displayValue = "";
-let operands = [];
-display.textContent = "0";
-let operator = null;
-let result = null;
-let decimalAdded = false;
-let prevInput = null;
-let lastOperator = null;
-
 function populateDisplay(num) {
   if (isNaN(num) && num !== ".") {
     display.textContent = "Invalid input";
@@ -74,7 +74,7 @@ function clearAll() {
   resetFontSize();
   lastInputType = null;
   lastOperator = null;
-  document.querySelector('.clear-text').textContent = 'AC';
+  document.querySelector(".clear-text").textContent = "AC";
 }
 
 function calculate() {
@@ -103,6 +103,30 @@ function roundResult(result) {
   }
 }
 
+function blinkDisplay() {
+  display.classList.add("blink");
+  setTimeout(() => {
+    display.classList.remove("blink");
+  }, 100);
+}
+
+function adjustFontSize(value) {
+  const fontSize = parseInt(window.getComputedStyle(display).fontSize);
+  const resultString = value.toString();
+  const maxWidth = 242;
+  let maxFontSize;
+
+  maxFontSize = Math.floor(maxWidth / (resultString.length * 0.7));
+
+  display.style.fontSize = Math.min(fontSize, maxFontSize) + "px";
+}
+
+function resetFontSize() {
+  display.style.fontSize = 50 + "px";
+}
+
+// Buttons support
+// Event listener for decimal button
 const decimalBtn = document.querySelector(".decimal");
 decimalBtn.addEventListener("click", () => {
   if (prevInput === null || prevInput === "operator") {
@@ -121,10 +145,11 @@ decimalBtn.addEventListener("click", () => {
   decimalAdded = true;
 });
 
+// Event listeners for number buttons
 const numberBtn = document.querySelectorAll(".number");
 numberBtn.forEach((button) => {
   button.addEventListener("click", () => {
-    document.querySelector('.clear-text').textContent = 'C';
+    document.querySelector(".clear-text").textContent = "C";
 
     if (display.textContent == "Invalid input") {
       resetFontSize();
@@ -158,6 +183,8 @@ numberBtn.forEach((button) => {
     }
   });
 });
+
+// Event listeners for operators button
 const operatorBtn = document.querySelectorAll(".operator");
 
 operatorBtn.forEach((operator) => {
@@ -170,13 +197,6 @@ operatorBtn.forEach((operator) => {
     e.target.classList.add("active");
   });
 });
-
-function blinkDisplay() {
-  display.classList.add("blink");
-  setTimeout(() => {
-    display.classList.remove("blink");
-  }, 100);
-}
 
 operatorBtn.forEach((button) => {
   button.addEventListener("click", () => {
@@ -237,6 +257,7 @@ operatorBtn.forEach((button) => {
   });
 });
 
+// Event listener for equal button
 const equalBtn = document.querySelector(".equals");
 equalBtn.addEventListener("click", () => {
   blinkDisplay();
@@ -261,6 +282,7 @@ equalBtn.addEventListener("click", () => {
   decimalAdded = false;
 });
 
+// Event listener for clear button
 const clearBtn = document.querySelector(".clear");
 clearBtn.addEventListener("click", () => {
   clearAll();
@@ -270,47 +292,7 @@ clearBtn.addEventListener("click", () => {
   });
 });
 
-function adjustFontSize(value) {
-  const fontSize = parseInt(window.getComputedStyle(display).fontSize);
-  const resultString = value.toString();
-  const maxWidth = 242;
-  let maxFontSize;
-
-  maxFontSize = Math.floor(maxWidth / (resultString.length * 0.7));
-
-  display.style.fontSize = Math.min(fontSize, maxFontSize) + "px";
-}
-
-function resetFontSize() {
-  display.style.fontSize = 50 + "px";
-}
-
-const header = document.querySelector(".header-container");
-const body = document.querySelector("body");
-const footer = document.querySelector(".footer");
-const darkMode = document.querySelector(".dark-mode-btn");
-const brightIcon = document.querySelector("#bright-icon");
-const brightLogo = document.querySelector("#bright-logo");
-
-let isDarkMode = false;
-
-darkMode.addEventListener("click", () => {
-  header.classList.toggle("dark-mode");
-  body.classList.toggle("dark-mode");
-  footer.classList.toggle("dark-mode-footer");
-  darkMode.classList.toggle("dark-mode");
-
-  if (isDarkMode) {
-    brightIcon.src = "./images/bright-mode.png";
-    brightLogo.src = "./images/denis-logo-black.png";
-    isDarkMode = false;
-  } else {
-    brightIcon.src = "./images/night-mode.png";
-    brightLogo.src = "./images/denis-logo-white.png";
-    isDarkMode = true;
-  }
-});
-
+// Event listener and function for plus minus button
 const plusMinus = document.querySelector(".plus-minus");
 plusMinus.addEventListener("click", () => {
   blinkDisplay();
@@ -360,6 +342,7 @@ function negateNumber() {
   prevInput = "plusMinus";
 }
 
+// Event listener and function for percentage button
 const percentageBtn = document.querySelector(".percentage");
 percentageBtn.addEventListener("click", () => {
   blinkDisplay();
@@ -415,6 +398,34 @@ function percentageDivisor() {
   prevInput = "percentageDivisor";
 }
 
+// Dark mode support
+
+const header = document.querySelector(".header-container");
+const body = document.querySelector("body");
+const footer = document.querySelector(".footer");
+const darkMode = document.querySelector(".dark-mode-btn");
+const brightIcon = document.querySelector("#bright-icon");
+const brightLogo = document.querySelector("#bright-logo");
+
+let isDarkMode = false;
+
+darkMode.addEventListener("click", () => {
+  header.classList.toggle("dark-mode");
+  body.classList.toggle("dark-mode");
+  footer.classList.toggle("dark-mode-footer");
+  darkMode.classList.toggle("dark-mode");
+
+  if (isDarkMode) {
+    brightIcon.src = "./images/bright-mode.png";
+    brightLogo.src = "./images/denis-logo-black.png";
+    isDarkMode = false;
+  } else {
+    brightIcon.src = "./images/night-mode.png";
+    brightLogo.src = "./images/denis-logo-white.png";
+    isDarkMode = true;
+  }
+});
+
 //Keyboard support
 
 function highlight(button) {
@@ -454,8 +465,7 @@ document.addEventListener("keydown", (event) => {
     highlight(plusMinus);
     event.preventDefault();
     plusMinus.click();
-  }
-   else {
+  } else {
     operatorBtn.forEach((button) => {
       if (button.textContent === key) {
         button.click();
@@ -471,7 +481,7 @@ document.addEventListener("keydown", (event) => {
       } else if ((key === "-") & (button.value === "-")) {
         event.preventDefault();
         button.click();
-      } 
+      }
     });
   }
 });
@@ -487,3 +497,20 @@ function handleBackSpace() {
     display.textContent = "0";
   }
 }
+
+// Disable zoom on double tap on smartphone
+const calculator = document.querySelector("#calculator");
+let touchStart = 0;
+let touchEnd = 0;
+
+calculator.addEventListener("touchstart", function (event) {
+  touchStart = new Date().getTime();
+
+  if (touchEnd - touchStart < 300 && touchEnd - touchStart > 0) {
+    event.preventDefault();
+  }
+});
+
+calculator.addEventListener("touchend", function (event) {
+  touchEnd = new Date().getTime();
+});
