@@ -56,7 +56,7 @@ body {
   -moz-box-shadow: 0px 30px 45px -15px rgba(0, 0, 0, 0.75);
   box-shadow: 0px 30px 45px -15px rgba(0, 0, 0, 0.75);
   -webkit-font-smoothing: antialiased;
-  background-color: rgba(125, 126, 132, 0.90);
+  background-color: rgba(125, 126, 132, 0.9);
 }
 
 #display {
@@ -69,7 +69,7 @@ body {
   border-radius: 15px 15px 0 0;
   text-align: right;
   font-size: 50px;
-  background-color: rgba(75, 76, 77, 0.90);
+  background-color: rgba(75, 76, 77, 0.9);
   color: white;
   padding-right: 15px;
 }
@@ -90,7 +90,7 @@ input[type="reset"] {
   border-top: rgb(0, 0, 0);
   border-right: rgb(0, 0, 0);
   font: inherit;
-  cursor: pointer;
+  cursor: default;
 }
 
 button:focus {
@@ -101,6 +101,7 @@ button:focus {
   width: 60px;
   height: 50px;
   font-size: 23px;
+  font-weight: 600;
   background-color: rgb(125, 126, 132);
   color: white;
   transition: background-color 0.2s ease;
@@ -110,6 +111,8 @@ button:focus {
 #calculator button.equals {
   background-color: rgb(243, 156, 39);
   color: white;
+  font-size: 27px;
+  font-weight: 600;
 }
 
 #calculator button.number.zero {
@@ -123,6 +126,18 @@ button:focus {
 
 #calculator #top-btn {
   background-color: rgb(99, 101, 107);
+  font-size: 18px;
+}
+
+.plus {
+  font-size: 14px;
+  position: relative;
+  top: -0.4em;
+}
+
+.minus {
+  position: relative;
+  top: 0.1em;
 }
 
 .blink {
@@ -189,4 +204,31 @@ button:focus {
   background-color: rgb(33, 40, 54);
   border-color: rgb(31, 41, 55);
   color: white;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: max-content;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  top: 90%;
+  z-index: 1;
+  opacity: 0;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.tooltip:hover .tooltiptext {
+  transition: opacity 0.3s ease-out 1.5s;
+  visibility: visible;
+  opacity: 1;
 }
