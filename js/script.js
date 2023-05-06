@@ -507,20 +507,3 @@ function handleBackSpace() {
     display.textContent = "0";
   }
 }
-
-// Disable zoom on double tap on smartphone
-const calculator = document.querySelector("#calculator");
-let touchStart = 0;
-let touchEnd = 0;
-
-calculator.addEventListener("touchstart", function (event) {
-  touchStart = new Date().getTime();
-
-  if (touchEnd - touchStart < 300 && touchEnd - touchStart > 0) {
-    event.preventDefault();
-  }
-});
-
-calculator.addEventListener("touchend", function (event) {
-  touchEnd = new Date().getTime();
-});
