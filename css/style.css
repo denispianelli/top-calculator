@@ -57,6 +57,7 @@ body {
   box-shadow: 0px 30px 45px -15px rgba(0, 0, 0, 0.75);
   -webkit-font-smoothing: antialiased;
   background-color: rgba(125, 126, 132, 0.9);
+  touch-action: manipulation;
 }
 
 #display {
