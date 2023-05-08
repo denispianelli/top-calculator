@@ -1,57 +1,74 @@
 const display = document.querySelector("#display");
 display.textContent = "0";
 let displayValue = "";
-let operands = [];
-let operator = null;
-let result = null;
-let decimalAdded = false;
+let firstNumber = null;
+let secondNumber = null;
+let result = 0;
 let prevInput = null;
 let lastOperator = null;
+let prevKey = null;
 
-function add(...numbers) {
-  const res = numbers.reduce((num1, num2) => num1 + num2);
-  return res;
-}
-
-function subtract(...numbers) {
-  const res = numbers.reduce((num1, num2) => num1 - num2);
-  return res;
-}
-
-function multiply(...numbers) {
-  const res = numbers.reduce((num1, num2) => num1 * num2);
-  return res;
-}
-
-function divide(...numbers) {
-  if (numbers.includes(0)) {
-    return "Cannot divide by zero";
+function calculate(operator, a, b) {
+  if (isNaN(a) || isNaN(b)) {
+    displayError("Invalid input");
+    return;
   }
-  const res = numbers.reduce((num1, num2) => num1 / num2);
-  return res;
-}
 
-function operate(operator, ...operands) {
+  if (!isSupportedOperator(operator)) {
+    displayError("Invalid input");
+    return;
+  }
+
   switch (operator) {
     case "+":
-      return add(...operands);
+      result = a + b;
+      break;
     case "-":
-      return subtract(...operands);
+      result = a - b;
+      break;
     case "*":
-      return multiply(...operands);
+      result = a * b;
+      break;
     case "/":
-      return divide(...operands);
+      if (b === 0) {
+        displayError("Cannot divide by zero");
+        return;
+      } else {
+        result = a / b;
+      }
+      break;
     default:
-      return null;
+      result = null;
+      break;
   }
+
+  function isSupportedOperator(operator) {
+    return (
+      operator === "+" ||
+      operator === "-" ||
+      operator === "*" ||
+      operator === "/"
+    );
+  }
+
+  function displayError(errorMessage) {
+    display.textContent = errorMessage;
+    adjustFontSize(errorMessage);
+  }
+
+  const roundedResult = roundResult(result);
+  firstNumber = parseFloat(roundedResult);
+  secondNumber = null;
+  displayValue = firstNumber;
+  display.textContent = displayValue;
+  adjustFontSize(displayValue);
+  return result;
 }
 
 function populateDisplay(num) {
   if (isNaN(num) && num !== ".") {
     display.textContent = "Invalid input";
-    resetDisplay();
-    return;
-  } else if (num === "." && decimalAdded) {
+    resetFontSize();
     return;
   }
 
@@ -59,44 +76,22 @@ function populateDisplay(num) {
   display.textContent = displayValue;
 }
 
-function resetDisplay() {
-  displayValue = "";
-}
-
 function clearAll() {
-  operands = [];
-  operator = null;
-  result = null;
-  resetDisplay();
-  display.textContent = "0";
-  decimalAdded = false;
-  prevInput = null;
-  resetFontSize();
-  lastInputType = null;
-  lastOperator = null;
   document.querySelector(".clear-text").textContent = "AC";
-}
-
-function calculate() {
-  if (operands.length < 2 || !operator) {
-    return;
-  }
-  result = operate(operator, ...operands);
-  operands = [result];
-  const roundedResult = roundResult(result);
-  display.textContent = roundedResult;
-
-  adjustFontSize(roundedResult);
+  display.textContent = "0";
+  displayValue = "";
+  firstNumber = null;
+  secondNumber = null;
+  result = 0;
+  prevInput = null;
+  lastOperator = null;
+  prevKey = null;
+  resetFontSize();
 }
 
 function roundResult(result) {
-  if (result == "Cannot divide by zero") {
-    return result;
-  }
   const roundedResult = Number(result).toFixed(15);
-  if (/\.?0+$/.test(roundedResult)) {
-    return Number(roundedResult).toString();
-  } else if (/\.?9+$/.test(roundedResult)) {
+  if (/\.?0+$/.test(roundedResult) || /\.?9+$/.test(roundedResult)) {
     return Number(roundedResult).toString();
   } else {
     return roundedResult;
@@ -115,329 +110,221 @@ function adjustFontSize(value) {
   const resultString = value.toString();
   const maxWidth = 242;
   let maxFontSize;
-
   maxFontSize = Math.floor(maxWidth / (resultString.length * 0.7));
 
-  display.style.fontSize = Math.min(fontSize, maxFontSize) + "px";
+  if (prevKey == "backSpace" && maxFontSize < 50) {
+    display.style.fontSize = Math.max(fontSize, maxFontSize) + "px";
+  } else {
+    display.style.fontSize = Math.min(fontSize, maxFontSize) + "px";
+  }
 }
 
 function resetFontSize() {
   display.style.fontSize = 50 + "px";
 }
 
-// Buttons support
-// Event listener for decimal button
 const decimalBtn = document.querySelector(".decimal");
-decimalBtn.addEventListener("click", () => {
-  if (prevInput === null || prevInput === "operator") {
-    resetDisplay();
-    populateDisplay("0.");
-  } else if (prevInput === "equal") {
-    operands = [displayValue];
-    resetDisplay();
-    populateDisplay("0.");
-  } else {
-    populateDisplay(decimalBtn.textContent);
+decimalBtn.addEventListener("click", handleDecimalClick);
+
+function handleDecimalClick() {
+  if (
+    display.textContent == "Cannot divide by zero" ||
+    display.textContent == "Invalid input"
+  ) {
+    clearAll();
   }
 
-  displayValue = display.textContent;
-  prevInput = "decimal";
-  decimalAdded = true;
-});
+  if (prevInput == "operator") {
+    displayValue = "";
+  }
 
-// Event listeners for number buttons
-const numberBtn = document.querySelectorAll(".number");
-numberBtn.forEach((button) => {
-  button.addEventListener("click", () => {
-    document.querySelector(".clear-text").textContent = "C";
-
-    if (display.textContent == "Invalid input") {
-      resetFontSize();
-    }
-
-    if (prevInput === "equal") {
-      resetFontSize();
-      resetDisplay();
-      operands = [];
-    } else if (prevInput === "operator") {
-      resetDisplay();
-      resetFontSize();
-    } else if (prevInput == "plusMinus") {
-      resetDisplay();
-      resetFontSize();
-    } else if (prevInput == "plusMinus") {
-      resetDisplay();
-      resetFontSize();
-    }
-
-    if (decimalAdded == true && !displayValue.toString().includes(".")) {
-      displayValue = display.textContent;
-    }
-
-    populateDisplay(button.value);
-    displayValue = Number(display.textContent);
-    prevInput = "number";
-
-    if (display.textContent > 7) {
-      adjustFontSize(displayValue);
-    }
-  });
-});
-
-// Event listeners for operators button
-const operatorBtn = document.querySelectorAll(".operator");
-
-operatorBtn.forEach((operator) => {
-  operator.addEventListener("click", (e) => {
-    operatorBtn.forEach((op) => {
-      if (op !== e.target) {
-        op.classList.remove("active");
-      }
-    });
-    e.target.classList.add("active");
-  });
-});
-
-operatorBtn.forEach((button) => {
-  button.addEventListener("click", () => {
-    blinkDisplay();
-
-    if (prevInput === "operator" && button.value === operator) {
-      return;
-    } else if (prevInput === "number") {
-      prevInput = "operator";
-      operands.push(Number(displayValue));
-    } else if (prevInput === "equal" && operands == result) {
-      operator = button.value;
-      prevInput = "operator";
-      resetDisplay();
-    } else if (prevInput === "equal" && operands !== result) {
-      operands.push(Number(displayValue));
-      prevInput = "operator";
-      resetDisplay();
-    } else if (prevInput === "decimal") {
-      prevInput = "operator";
-      operands.push(Number(displayValue));
-    } else if (prevInput == "plusMinus" && lastInputType == "number") {
-      prevInput = "operator";
-      operands.push(Number(displayValue));
-    } else if (prevInput == "plusMinus" && lastInputType == "operators") {
-      operator = button.value;
-      prevInput = "operator";
-      resetDisplay();
-    } else if (prevInput == "percentageDivisor" && lastInputType == "number") {
-      prevInput = "operator";
-      operands.push(Number(displayValue));
-    } else if (
-      prevInput == "percentageDivisor" &&
-      lastInputType == "operators"
-    ) {
-      operator = button.value;
-      prevInput = "operator";
-      resetDisplay();
-    }
-
-    if (button.value == "+") {
-      lastOperator = "add";
-    } else if (button.value == "-") {
-      lastOperator = "subtract";
-    } else if (button.value == "*") {
-      lastOperator = "multiply";
-    } else if (button.value == "/") {
-      lastOperator = "divide";
-    }
-
-    if (operands.length >= 2) {
-      calculate();
-    }
-
-    operator = button.value;
-    decimalAdded = false;
-    prevInput = "operator";
-  });
-});
-
-// Event listener for equal button
-const equalBtn = document.querySelector(".equals");
-equalBtn.addEventListener("click", () => {
-  blinkDisplay();
-  operatorBtn.forEach((operator) => {
-    operator.classList.remove("active");
-  });
-  if (prevInput === "operator") {
-    displayValue = Number(display.textContent);
-    operands.push(Number(displayValue));
-    calculate();
-  } else if (prevInput === "decimal") {
-    operands.push(Number(displayValue));
-    calculate();
-  } else if (operands.length > 0) {
-    operands.push(Number(displayValue));
-    calculate();
-  } else {
+  if (displayValue.toString().includes(".")) {
     return;
   }
 
-  prevInput = "equal";
-  decimalAdded = false;
+  if (displayValue == "") {
+    populateDisplay("0.");
+  } else {
+    populateDisplay(".");
+  }
+
+  prevInput = "decimal";
+}
+
+const numberBtn = document.querySelectorAll(".number");
+const clearText = document.querySelector(".clear-text");
+numberBtn.forEach((button) => {
+  button.addEventListener("click", handleNumberClick);
 });
 
-// Event listener for clear button
+function handleNumberClick(event) {
+  const buttonValue = event.target.value;
+  clearText.textContent = "C";
+  if (
+    display.textContent == "Cannot divide by zero" ||
+    display.textContent == "Invalid input"
+  ) {
+    clearAll();
+  }
+
+  if (prevInput == "operator" || prevInput == "equal") {
+    displayValue = "";
+  } else if (displayValue == "-0") {
+    displayValue = "-";
+  }
+
+  if (display.textContent.length > 16) {
+    return;
+  } else {
+    populateDisplay(buttonValue);
+  }
+
+  adjustFontSize(displayValue);
+  prevInput = "number";
+  prevKey = null;
+}
+
+const operatorBtn = document.querySelectorAll(".operator");
+operatorBtn.forEach((button) => {
+  button.addEventListener("click", () => {
+    handleOperatorClick(button);
+    activateOperatorButton(button);
+  });
+});
+
+function activateOperatorButton(button) {
+  operatorBtn.forEach((op) => {
+    if (op !== button) {
+      op.classList.remove("active");
+    }
+  });
+  button.classList.add("active");
+}
+
+function handleOperatorClick(button) {
+  blinkDisplay();
+  if (
+    prevInput == "operator" ||
+    display.textContent == "Cannot divide by zero"
+  ) {
+    return;
+  }
+
+  if (firstNumber == null) {
+    firstNumber = parseFloat(displayValue);
+  } else if (secondNumber == null && prevInput != "equal") {
+    secondNumber = parseFloat(displayValue);
+  }
+
+  if (firstNumber != null && secondNumber != null) {
+    calculate(operator, firstNumber, secondNumber);
+  }
+
+  switch (button.value) {
+    case "+":
+      lastOperator = "add";
+      break;
+    case "-":
+      lastOperator = "subtract";
+      break;
+    default:
+      break;
+  }
+
+  operator = button.value;
+  prevInput = "operator";
+}
+
+const equalBtn = document.querySelector(".equals");
+equalBtn.addEventListener("click", handleEqualClick);
+
+function handleEqualClick() {
+  blinkDisplay();
+  resetFontSize();
+  operatorBtn.forEach((operator) => {
+    operator.classList.remove("active");
+  });
+
+  if (secondNumber == null && prevInput != "equal") {
+    secondNumber = parseFloat(displayValue);
+  }
+
+  if (firstNumber != null && secondNumber != null) {
+    calculate(operator, firstNumber, secondNumber);
+  }
+
+  prevInput = "equal";
+}
+
 const clearBtn = document.querySelector(".clear");
 clearBtn.addEventListener("click", () => {
+  handleClearClick();
+});
+
+function handleClearClick() {
   clearAll();
   blinkDisplay();
   operatorBtn.forEach((operator) => {
     operator.classList.remove("active");
   });
-});
+}
 
-// Event listener and function for plus minus button
 const plusMinus = document.querySelector(".plus-minus");
 plusMinus.addEventListener("click", () => {
   blinkDisplay();
   negateNumber();
 });
 
-let lastInputType;
-
 function negateNumber() {
-  if (prevInput == "number" || prevInput == null) {
-    displayValue *= -1;
-    display.textContent = displayValue;
-    lastInputType = "number";
-  } else if (prevInput == "operator" || prevInput == "equal") {
-    operands = [operands * -1];
-    display.textContent = operands;
-    lastInputType = "operators";
-  } else if (prevInput == "percentageDivisor" && lastInputType == "result") {
-    displayValue *= -1;
-    display.textContent = displayValue;
-    lastInputType = "percentage";
-  } else if (
-    prevInput == "percentageDivisor" &&
-    lastInputType != "result" &&
-    lastInputType != "number"
-  ) {
-    operands = [operands * -1];
-    display.textContent = operands;
-    lastInputType = "operators";
-  } else if (prevInput == "percentageDivisor" && lastInputType == "number") {
-    displayValue *= -1;
-    display.textContent = displayValue;
-    lastInputType = "percentage";
+  if (display.textContent == "Cannot divide by zero") {
+    return;
   }
 
-  if (prevInput == "plusMinus" && lastInputType == "number") {
-    displayValue *= -1;
+  if (firstNumber == null && display.textContent == "0") {
+    displayValue = "-0";
     display.textContent = displayValue;
-  } else if (prevInput == "plusMinus" && lastInputType == "operators") {
-    operands = [operands * -1];
-    display.textContent = operands;
-  } else if (prevInput == "plusMinus" && lastInputType == "percentage") {
+  } else if (displayValue == "-0") {
+    display.textContent = "0";
+    displayValue = "";
+  } else if (prevInput == "operator" && firstNumber != null) {
+    displayValue = "-0";
+    display.textContent = displayValue;
+  } else if (displayValue == result && prevInput != "operator") {
+    displayValue *= -1;
+    firstNumber = displayValue;
+    display.textContent = displayValue;
+  } else {
     displayValue *= -1;
     display.textContent = displayValue;
   }
 
-  prevInput = "plusMinus";
+  prevInput = "plus-minus";
 }
 
-// Event listener and function for percentage button
 const percentageBtn = document.querySelector(".percentage");
 percentageBtn.addEventListener("click", () => {
   blinkDisplay();
   percentageDivisor();
 });
 
-let percentageCase;
-
 function percentageDivisor() {
-  if (operands.length == 0 && prevInput != "percentageDivisor") {
-    displayValue /= 100;
-    display.textContent = displayValue;
-    percentageCase = "displayValue";
-  } else if (
-    prevInput == "number" &&
-    (lastOperator == "add" || lastOperator == "subtract") &&
-    operands.length != 0
-  ) {
-    let result = operands * (displayValue / 100);
-    displayValue = result;
-    display.textContent = result;
-    percentageCase = "result";
-  } else if (prevInput == "equal") {
-    operands = [operands / 100];
-    display.textContent = operands;
-    percentageCase = "operands";
-  } else if (
-    (lastOperator == "multiply" || lastOperator == "divide") &&
-    operands.length != 0 &&
-    prevInput != "percentageDivisor" && prevInput != "plusMinus"
-  ) {
-    displayValue /= 100;
-    display.textContent = displayValue;
-    percentageCase = "displayValue";
-  } else if (prevInput == "operator") {
-    operands = [operands / 100];
-    display.textContent = operands;
-    percentageCase = "operands";
-  } else if (prevInput == "plusMinus" && lastInputType == "operators") {
-    operands = [operands / 100];
-    display.textContent = operands;
-    percentageCase = "operands";
-  } else if (prevInput == "plusMinus") {
-    displayValue /= 100;
-    display.textContent = displayValue;
-    percentageCase = "displayValue";
+  if (display.textContent == "Cannot divide by zero") {
+    return;
   }
 
-  if (prevInput == "percentageDivisor" && percentageCase == "displayValue") {
-    displayValue /= 100;
-    display.textContent = displayValue;
-  } else if (prevInput == "percentageDivisor" && percentageCase == "operands") {
-    operands = [(operands /= 100)];
-    display.textContent = operands;
-  }
-  if (prevInput == "percentageDivisor" && percentageCase == "result") {
-    result = operands * (displayValue / 100);
-    displayValue = result;
-    display.textContent = result;
+  if (displayValue.toString().length >= 8) {
+    return;
+  } else if (lastOperator == "add" || lastOperator == "subtract") {
+    displayValue = parseFloat(firstNumber * (displayValue / 100));
+  } else {
+    displayValue = parseFloat(displayValue / 100);
   }
 
+  display.textContent = displayValue;
   adjustFontSize(displayValue);
-  prevInput = "percentageDivisor";
 }
 
-// Dark mode support
-
-const header = document.querySelector(".header-container");
-const body = document.querySelector("body");
-const footer = document.querySelector(".footer");
-const darkMode = document.querySelector(".dark-mode-btn");
-const brightIcon = document.querySelector("#bright-icon");
-const brightLogo = document.querySelector("#bright-logo");
-
-let isDarkMode = false;
-
-darkMode.addEventListener("click", () => {
-  header.classList.toggle("dark-mode");
-  body.classList.toggle("dark-mode");
-  footer.classList.toggle("dark-mode-footer");
-  darkMode.classList.toggle("dark-mode");
-
-  if (isDarkMode) {
-    brightIcon.src = "./images/bright-mode.png";
-    brightLogo.src = "./images/denis-logo-black.png";
-    isDarkMode = false;
-  } else {
-    brightIcon.src = "./images/night-mode.png";
-    brightLogo.src = "./images/denis-logo-white.png";
-    isDarkMode = true;
-  }
-});
-
 //Keyboard support
-
 function highlight(button) {
   button.classList.add("highlight");
   setTimeout(() => {
@@ -497,7 +384,11 @@ document.addEventListener("keydown", (event) => {
 });
 
 function handleBackSpace() {
-  if (lastInputType == "operators" && prevInput != "number") {
+  if (
+    display.textContent.includes("NaN") ||
+    prevInput == "operator" ||
+    prevInput == "equal"
+  ) {
     return;
   } else {
     displayValue = displayValue.toString().slice(0, -1);
@@ -506,4 +397,39 @@ function handleBackSpace() {
   if (displayValue.length == 0) {
     display.textContent = "0";
   }
+
+  if (display.textContent.length >= 8) {
+    adjustFontSize(display.textContent);
+  } else if (display.textContent.length <= 9) {
+    display.style.fontSize = 50 + "px";
+  }
+
+  prevKey = "backSpace";
 }
+
+// Dark mode support
+const header = document.querySelector(".header-container");
+const body = document.querySelector("body");
+const footer = document.querySelector(".footer");
+const darkMode = document.querySelector(".dark-mode-btn");
+const brightIcon = document.querySelector("#bright-icon");
+const brightLogo = document.querySelector("#bright-logo");
+
+let isDarkMode = false;
+
+darkMode.addEventListener("click", () => {
+  header.classList.toggle("dark-mode");
+  body.classList.toggle("dark-mode");
+  footer.classList.toggle("dark-mode-footer");
+  darkMode.classList.toggle("dark-mode");
+
+  if (isDarkMode) {
+    brightIcon.src = "./images/bright-mode.png";
+    brightLogo.src = "./images/denis-logo-black.png";
+    isDarkMode = false;
+  } else {
+    brightIcon.src = "./images/night-mode.png";
+    brightLogo.src = "./images/denis-logo-white.png";
+    isDarkMode = true;
+  }
+});
