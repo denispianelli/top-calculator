@@ -24,7 +24,7 @@ https://denispianelli.github.io/calculator/
 
 During the development of this project, I learned:
 
-How to use DOM manipulation to update the display and handle user input.
-How to define and use functions and event listeners in JavaScript.
-How to use CSS to style the user interface of a web app.
+How to use DOM manipulation to update the display and handle user input.  
+How to define and use functions and event listeners in JavaScript.  
+How to use CSS to style the user interface of a web app.  
 How to debug JavaScript code using the console.
