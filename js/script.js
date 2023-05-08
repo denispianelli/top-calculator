@@ -210,6 +210,10 @@ function handleOperatorClick(button) {
     return;
   }
 
+  if (displayValue == "") {
+    firstNumber = 0;
+  }
+
   if (firstNumber == null) {
     firstNumber = parseFloat(displayValue);
   } else if (secondNumber == null && prevInput != "equal") {
