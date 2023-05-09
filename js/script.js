@@ -5,6 +5,7 @@ let firstNumber = null;
 let secondNumber = null;
 let result = 0;
 let prevInput = null;
+let operator = null;
 let lastOperator = null;
 let prevKey = null;
 
@@ -86,6 +87,7 @@ function clearAll() {
   prevInput = null;
   lastOperator = null;
   prevKey = null;
+  operator = null;
   resetFontSize();
 }
 
@@ -203,10 +205,7 @@ function activateOperatorButton(button) {
 
 function handleOperatorClick(button) {
   blinkDisplay();
-  if (
-    prevInput == "operator" ||
-    display.textContent == "Cannot divide by zero"
-  ) {
+  if (display.textContent == "Cannot divide by zero"|| button.value == lastOperator) {
     return;
   }
 
@@ -216,7 +215,12 @@ function handleOperatorClick(button) {
 
   if (firstNumber == null) {
     firstNumber = parseFloat(displayValue);
-  } else if (secondNumber == null && prevInput != "equal") {
+  } else if (
+    secondNumber == null &&
+    prevInput != "equal" &&
+    prevInput != "plus-minus" &&
+    prevInput != "operator"
+  ) {
     secondNumber = parseFloat(displayValue);
   }
 
@@ -226,10 +230,16 @@ function handleOperatorClick(button) {
 
   switch (button.value) {
     case "+":
-      lastOperator = "add";
+      lastOperator = "+";
       break;
     case "-":
-      lastOperator = "subtract";
+      lastOperator = "-";
+      break;
+    case "/":
+      lastOperator = "/";
+      break;
+    case "*":
+      lastOperator = "*";
       break;
     default:
       break;
@@ -318,7 +328,7 @@ function percentageDivisor() {
 
   if (displayValue.toString().length >= 8) {
     return;
-  } else if (lastOperator == "add" || lastOperator == "subtract") {
+  } else if (lastOperator == "+" || lastOperator == "-") {
     displayValue = parseFloat(firstNumber * (displayValue / 100));
   } else {
     displayValue = parseFloat(displayValue / 100);
