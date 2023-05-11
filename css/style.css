@@ -33,7 +33,7 @@ body {
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
   height: 65px;
   background-color: white;
   color: rgb(40, 69, 115);
@@ -42,7 +42,6 @@ body {
 }
 
 .logo-big img {
-  padding-left: 32px;
   height: 50px;
 }
 
@@ -182,7 +181,6 @@ button:focus {
 .light-dark-mode {
   display: flex;
   align-items: center;
-  padding-right: 32px;
   height: 50px;
 }
 
@@ -237,5 +235,87 @@ button:focus {
 @media screen and (max-width: 767px) {
   .tooltiptext {
     display: none;
+  }
+}
+
+#topPart {
+  animation: fadeInUp 1s;
+}
+
+@keyframes fadeInUp {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+#rightPart {
+  animation: fadeInRight 1s;
+}
+
+@keyframes fadeInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+#denis {
+  animation: fadeIn 6s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+#pianelli {
+  animation: fadeIn 5s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+#bottomPart {
+  animation: fadeInDown 1s;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(+100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#leftPart {
+  animation: fadeInLeft 1s;
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
