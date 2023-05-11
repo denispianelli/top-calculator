@@ -427,7 +427,8 @@ const body = document.querySelector("body");
 const footer = document.querySelector(".footer");
 const darkMode = document.querySelector(".dark-mode-btn");
 const brightIcon = document.querySelector("#bright-icon");
-const brightLogo = document.querySelector("#bright-logo");
+const denis = document.querySelector("#denis");
+const pianelli = document.querySelector("#pianelli");
 
 let isDarkMode = false;
 
@@ -439,11 +440,13 @@ darkMode.addEventListener("click", () => {
 
   if (isDarkMode) {
     brightIcon.src = "./images/bright-mode.png";
-    brightLogo.src = "./images/denis-logo-black.png";
+    denis.style.fill = "black";
+    pianelli.style.fill = "black";
     isDarkMode = false;
   } else {
     brightIcon.src = "./images/night-mode.png";
-    brightLogo.src = "./images/denis-logo-white.png";
+    denis.style.fill = "white";
+    pianelli.style.fill = "white";
     isDarkMode = true;
   }
 });
