@@ -205,7 +205,7 @@ function activateOperatorButton(button) {
 
 function handleOperatorClick(button) {
   blinkDisplay();
-  if (display.textContent == "Cannot divide by zero"|| button.value == lastOperator) {
+  if (display.textContent == "Cannot divide by zero"|| (prevInput == "operator" && button.value == lastOperator)) {
     return;
   }
 
