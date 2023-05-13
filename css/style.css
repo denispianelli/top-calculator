@@ -239,12 +239,12 @@ button:focus {
 }
 
 #topPart {
-  animation: fadeInUp 2s;
+  animation: fadeInUp 0.3s;
 }
 
 @keyframes fadeInUp {
   from {
-    transform: translateY(-100%);
+    transform: translateY(-10%);
   }
   to {
     transform: translateY(0);
@@ -252,61 +252,108 @@ button:focus {
 }
 
 #rightPart {
-  animation: fadeInRight 2s;
+  animation: fadeInRight 0.3s;
 }
 
 @keyframes fadeInRight {
   from {
-    transform: translateX(100%);
+    transform: translateX(5%);
   }
   to {
     transform: translateX(0);
   }
 }
 
-#denis {
-  animation: fadeInRight 1.8s;
-}
-
-#pianelli {
-  animation: fadeInRight 1.8s;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 #bottomPart {
-  animation: fadeInDown 2s;
+  animation: fadeInDown 0.3s;
 }
 
 @keyframes fadeInDown {
   from {
-    opacity: 0;
-    transform: translateY(+100%);
+    transform: translateY(+10%);
   }
   to {
-    opacity: 1;
     transform: translateY(0);
   }
 }
 
 #leftPart {
-  animation: fadeInLeft 2s;
+  animation: fadeInLeft 0.3s;
 }
 
 @keyframes fadeInLeft {
   from {
-    opacity: 0;
-    transform: translateX(-100%);
+    transform: translateX(-5%);
   }
   to {
-    opacity: 1;
     transform: translateX(0);
   }
 }
+
+/* hover */
+
+svg:hover #topPart {
+  animation: fadeOutUp 0.3s forwards;
+}
+
+@keyframes fadeOutUp {
+  from {
+    transform: translateY(0%);
+  }
+  to {
+    transform: translateY(-10%);
+  }
+}
+
+svg:hover #rightPart {
+  animation: fadeOutRight 0.3s forwards;
+}
+
+@keyframes fadeOutRight {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    transform: translateX(5%);
+  }
+}
+
+svg:hover #bottomPart {
+  animation: fadeOutDown 0.3s forwards;
+}
+
+@keyframes fadeOutDown {
+  from {
+    transform: translateY(0%);
+  }
+  to {
+    transform: translateY(10%);
+  }
+}
+
+svg:hover #leftPart {
+  animation: fadeOutLeft 0.3s forwards;
+}
+
+@keyframes fadeOutLeft {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    transform: translateX(-5%);
+  }
+}
+
+svg:hover #github-mark {
+  animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
