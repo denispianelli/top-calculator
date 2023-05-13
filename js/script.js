@@ -1,6 +1,6 @@
 const display = document.querySelector("#display");
-display.textContent = "0";
-let displayValue = "";
+let displayValue = "0";
+display.textContent = displayValue;
 let firstNumber = null;
 let secondNumber = null;
 let result = 0;
@@ -80,7 +80,7 @@ function populateDisplay(num) {
 function clearAll() {
   document.querySelector(".clear-text").textContent = "AC";
   display.textContent = "0";
-  displayValue = "";
+  displayValue = "0";
   firstNumber = null;
   secondNumber = null;
   result = 0;
@@ -137,18 +137,14 @@ function handleDecimalClick() {
   }
 
   if (prevInput == "operator") {
-    displayValue = "";
+    displayValue = "0";
   }
 
   if (displayValue.toString().includes(".")) {
     return;
   }
 
-  if (displayValue == "") {
-    populateDisplay("0.");
-  } else {
-    populateDisplay(".");
-  }
+  populateDisplay(".");
 
   prevInput = "decimal";
 }
@@ -169,9 +165,22 @@ function handleNumberClick(event) {
     clearAll();
   }
 
-  if (prevInput == "operator" || prevInput == "equal") {
+  if (
+    displayValue.toString().startsWith("0") &&
+    !displayValue.toString().includes(".")
+  ) {
+    displayValue = displayValue.slice(1, -1);
+  }
+
+  if (prevInput == "equal") {
     displayValue = "";
-  } else if (displayValue == "-0") {
+    firstNumber = null;
+    secondNumber = null;
+  }
+
+  if (prevInput == "operator") {
+    displayValue = "";
+  } else if (displayValue === "-0") {
     displayValue = "-";
   }
 
@@ -205,12 +214,11 @@ function activateOperatorButton(button) {
 
 function handleOperatorClick(button) {
   blinkDisplay();
-  if (display.textContent == "Cannot divide by zero"|| (prevInput == "operator" && button.value == lastOperator)) {
+  if (
+    display.textContent == "Cannot divide by zero" ||
+    (prevInput == "operator" && button.value == lastOperator)
+  ) {
     return;
-  }
-
-  if (displayValue == "") {
-    firstNumber = 0;
   }
 
   if (firstNumber == null) {
@@ -259,8 +267,13 @@ function handleEqualClick() {
     operator.classList.remove("active");
   });
 
-  if (secondNumber == null && prevInput != "equal") {
+  if (secondNumber == null && prevInput != "equal" && operator != null) {
     secondNumber = parseFloat(displayValue);
+  }
+
+  if (firstNumber == null) {
+    firstNumber = parseFloat(displayValue);
+    secondNumber = null;
   }
 
   if (firstNumber != null && secondNumber != null) {
@@ -296,22 +309,18 @@ function negateNumber() {
 
   if (firstNumber == null && display.textContent == "0") {
     displayValue = "-0";
-    display.textContent = displayValue;
   } else if (displayValue == "-0") {
-    display.textContent = "0";
-    displayValue = "";
+    displayValue = "0";
   } else if (prevInput == "operator" && firstNumber != null) {
     displayValue = "-0";
-    display.textContent = displayValue;
-  } else if (displayValue == result && prevInput != "operator") {
+  } else if (displayValue == firstNumber) {
     displayValue *= -1;
     firstNumber = displayValue;
-    display.textContent = displayValue;
   } else {
     displayValue *= -1;
-    display.textContent = displayValue;
   }
 
+  display.textContent = displayValue;
   prevInput = "plus-minus";
 }
 
@@ -427,8 +436,9 @@ const body = document.querySelector("body");
 const footer = document.querySelector(".footer");
 const darkMode = document.querySelector(".dark-mode-btn");
 const brightIcon = document.querySelector("#bright-icon");
-const denis = document.querySelector("#denis");
-const pianelli = document.querySelector("#pianelli");
+const firstName = document.querySelector("#firstName");
+const lastName = document.querySelector("#lastName");
+const githubLogo = document.querySelector("#github-mark");
 
 let isDarkMode = false;
 
@@ -440,13 +450,15 @@ darkMode.addEventListener("click", () => {
 
   if (isDarkMode) {
     brightIcon.src = "./images/bright-mode.png";
-    denis.style.fill = "black";
-    pianelli.style.fill = "black";
+    firstName.style.fill = "black";
+    lastName.style.fill = "black";
+    githubLogo.style.fill = "#24292F";
     isDarkMode = false;
   } else {
     brightIcon.src = "./images/night-mode.png";
-    denis.style.fill = "white";
-    pianelli.style.fill = "white";
+    firstName.style.fill = "white";
+    lastName.style.fill = "white";
+    githubLogo.style.fill = "white";
     isDarkMode = true;
   }
 });
