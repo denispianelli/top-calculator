@@ -1,4 +1,4 @@
-# Calculator
+l# Calculator
 
 A simple calculator app built with JavaScript, HTML, and CSS. This project was developed as part of a formation provided by [The Odin Project](https://www.theodinproject.com/dashboard).
 
@@ -6,7 +6,7 @@ A simple calculator app built with JavaScript, HTML, and CSS. This project was d
 
 You can see the live demo of this project by visiting the following link:
 
-https://denispianelli.github.io/calculator/
+[Live Demo](https://denispianelli.github.io/top-calculator/)
 
 ## Features
 
